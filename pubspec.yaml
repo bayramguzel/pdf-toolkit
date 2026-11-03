@@ -1,0 +1,127 @@
+name: pdf_toolkit
+description: A comprehensive PDF toolkit application with advanced PDF manipulation features (merge, split, compress, protect) and a rich-text notepad for creating professional documents with images and styling.
+publish_to: 'none'
+version: 2.5.3+53
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  
+  # PDF handling
+  syncfusion_flutter_pdf: ^33.1.45
+  syncfusion_flutter_pdfviewer: ^33.1.45
+  pdf: ^3.11.1
+  docx_to_text: ^1.0.1
+  printing: ^5.13.4
+  
+  # File picking
+  file_picker: ^11.0.2
+  
+  # Image handling
+  image: ^4.2.0
+  
+  # Path and file management
+  path_provider: ^2.1.4
+  path: ^1.9.0
+  
+  # State management
+  provider: ^6.1.2
+  
+  # Sharing files
+  share_plus: ^12.0.1
+  
+  # URL launcher
+  url_launcher: ^6.3.1
+  
+  # Receiving shared files
+  receive_sharing_intent: ^1.9.0
+  
+  # Permission handling
+  permission_handler: ^13.0.0
+  
+  # Settings storage
+  shared_preferences: ^2.3.3
+  
+  # Device info for permissions
+  device_info_plus: ^12.3.0
+
+  # App version info
+  package_info_plus: ^9.0.1
+
+  # Video player for splash screen
+  video_player: ^2.9.2
+
+  cupertino_icons: ^1.0.8
+  flutter_quill: ^11.5.0
+  flutter_colorpicker: ^1.1.0
+  flutter_quill_extensions: ^11.0.0
+  
+  # Web support
+  universal_html: ^2.2.4
+  js: ^0.7.1
+  web: ^1.1.0
+
+  # Ad Monetization
+  unity_ads_plugin: ^0.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/logo.png"
+    background_color: "#111827"
+    theme_color: "#111827"
+  windows:
+    generate: true
+    image_path: "assets/logo.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/logo.png"
+  image_path: "assets/logo.png"
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/privacy_policy.md
+    - assets/logo.png
+    - assets/splash.mp4
+    - assets/fonts/
+
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 700
+    # NotoEmoji only for mobile (too large for web - 10MB)
+    - family: NotoEmoji
+      fonts:
+        - asset: assets/fonts/NotoColorEmoji.ttf
+
+flutter_native_splash:
+  color: "#111827"
+  image: assets/logo.png
+  android: true
+  ios: true
+  android_12:
+    image: assets/logo.png
+    color: "#111827"
+

@@ -1,0 +1,1372 @@
+{
+  "@@locale": "en",
+  "appTitle": "PDF Toolkit",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "homeTitle": "PDF Toolkit",
+  "@homeTitle": {
+    "description": "Title on home screen"
+  },
+  "homeSubtitle": "All-in-One PDF Solution",
+  "@homeSubtitle": {
+    "description": "Subtitle on home screen"
+  },
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button text"
+  },
+  "readPdf": "Read PDF",
+  "@readPdf": {
+    "description": "Read PDF tool"
+  },
+  "openFolder": "Open Folder",
+  "@openFolder": {
+    "description": "Open Folder button text"
+  },
+  "mergePdf": "Merge PDFs",
+  "@mergePdf": {
+    "description": "Merge PDF tool"
+  },
+  "splitPdf": "Split PDF",
+  "@splitPdf": {
+    "description": "Split PDF tool"
+  },
+  "compressPdf": "Compress PDF",
+  "@compressPdf": {
+    "description": "Title for compress PDF screen"
+  },
+  "encryptPdf": "Encrypt PDF",
+  "@encryptPdf": {
+    "description": "Title for encrypt PDF screen"
+  },
+  "pdfToImage": "PDF to Image",
+  "@pdfToImage": {
+    "description": "Title for PDF to Image tool"
+  },
+  "pdfToText": "Extract Text",
+  "@pdfToText": {
+    "description": "PDF to Text tool"
+  },
+  "rotatePdf": "Rotate Pages",
+  "@rotatePdf": {
+    "description": "Rotate pages tool"
+  },
+  "removePdf": "Remove Pages",
+  "@removePdf": {
+    "description": "Remove pages tool"
+  },
+  "reorderPdf": "Reorder Pages",
+  "@reorderPdf": {
+    "description": "Reorder pages tool"
+  },
+  "watermarkPdf": "Add Watermark",
+  "@watermarkPdf": {
+    "description": "Add watermark tool"
+  },
+  "imageToPdf": "Image to PDF",
+  "@imageToPdf": {
+    "description": "Image to PDF tool"
+  },
+  "imageToPdfDesc": "Convert images (JPG, PNG, BMP, GIF) to a single PDF file.",
+  "@imageToPdfDesc": {
+    "description": "Image to PDF description"
+  },
+  "wordToPdf": "Word to PDF",
+  "@wordToPdf": {
+    "description": "Title for Word to PDF tool"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings menu"
+  },
+  "appearance": "Appearance",
+  "@appearance": {
+    "description": "Appearance section"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Dark mode toggle"
+  },
+  "colorScheme": "Color Scheme",
+  "@colorScheme": {
+    "description": "Color scheme option"
+  },
+  "storage": "Storage",
+  "@storage": {
+    "description": "Storage section"
+  },
+  "saveDirectory": "Save Directory",
+  "@saveDirectory": {
+    "description": "Save directory setting"
+  },
+  "shareAppMessage": "Use 15 powerful PDF features completely free with PDF Toolkit! (Read, Merge, Split, Compress, Rotate, Remove Pages, Reorder, Watermark, Encrypt, Unlock, PDF to Image, PDF to Text, Image to PDF, Text to PDF, Rich-Text Notepad)",
+  "@shareAppMessage": {
+    "description": "Message when sharing the app"
+  },
+  "fileDownloaded": "File downloaded successfully.",
+  "@fileDownloaded": {
+    "description": "Message when file is downloaded"
+  },
+  "shareFile": "Share PDF File",
+  "@shareFile": {
+    "description": "Subject when sharing a file"
+  },
+  "currentDirectory": "Current: {path}",
+  "@currentDirectory": {
+    "description": "Current directory label",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "changeDirectory": "Change",
+  "@changeDirectory": {
+    "description": "Change directory button"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About menu item"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy menu item"
+  },
+  "connect": "Connect",
+  "@connect": {
+    "description": "Social media section"
+  },
+  "supportUs": "Support Us",
+  "@supportUs": {
+    "description": "Donation section"
+  },
+  "buyMeACoffee": "Buy Me a Coffee",
+  "@buyMeACoffee": {
+    "description": "Buy me a coffee link"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language setting"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme setting"
+  },
+  "light": "Light",
+  "@light": {
+    "description": "Light theme"
+  },
+  "dark": "Dark",
+  "@dark": {
+    "description": "Dark theme"
+  },
+  "defaultAppDocuments": "Default (App Documents)",
+  "@defaultAppDocuments": {
+    "description": "Default save directory label"
+  },
+  "saveDirectoryUpdated": "Save directory updated to: {path}",
+  "@saveDirectoryUpdated": {
+    "description": "Save directory updated message",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSelectingDirectory": "Error selecting directory: {error}",
+  "@errorSelectingDirectory": {
+    "description": "Error message for directory selection",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfToolkitDescription": "Professional PDF Tools for Android.",
+  "@pdfToolkitDescription": {
+    "description": "App description in about dialog"
+  },
+  "website": "Website",
+  "@website": {
+    "description": "Website label"
+  },
+  "socialMedia": "Social Media",
+  "@socialMedia": {
+    "description": "Social media section"
+  },
+  "donate": "Donate",
+  "@donate": {
+    "description": "Donation section"
+  },
+  "feedback": "Feedback",
+  "@feedback": {
+    "description": "Feedback menu item"
+  },
+  "version": "Version",
+  "@version": {
+    "description": "Version label"
+  },
+  "aboutDescription": "A comprehensive PDF management tool with 14 powerful features:",
+  "@aboutDescription": {
+    "description": "Detailed description in about dialog"
+  },
+  "resetToDefault": "Reset to Default",
+  "@resetToDefault": {
+    "description": "Reset to default button"
+  },
+  "information": "Information",
+  "@information": {
+    "description": "Information section"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Select language dialog title"
+  },
+  "selectThemeMode": "Select Theme Mode",
+  "@selectThemeMode": {
+    "description": "Select theme mode dialog title"
+  },
+  "couldNotOpenUrl": "Could not open URL",
+  "@couldNotOpenUrl": {
+    "description": "Error message when URL cannot be opened"
+  },
+  "storagePermissionRequired": "Storage permission is required. Please grant permission in app settings to select a save folder.",
+  "@storagePermissionRequired": {
+    "description": "Permission required message"
+  },
+  "saveDirectoryUpdatedSuccess": "Save directory updated successfully! All files will be saved here.",
+  "@saveDirectoryUpdatedSuccess": {
+    "description": "Success message for directory update"
+  },
+  "pageSize": "Page Size",
+  "@pageSize": {
+    "description": "Page size label"
+  },
+  "portrait": "Portrait",
+  "@portrait": {
+    "description": "Portrait orientation"
+  },
+  "landscape": "Landscape",
+  "@landscape": {
+    "description": "Landscape orientation"
+  },
+  "imagesPerPage": "Images per Page",
+  "@imagesPerPage": {
+    "description": "Images per page label"
+  },
+  "marginLabel": "Margin",
+  "@marginLabel": {
+    "description": "Margin label"
+  },
+  "autoEnhanceColors": "Auto Enhance Colors",
+  "@autoEnhanceColors": {
+    "description": "Auto enhance colors toggle"
+  },
+  "addMoreImages": "Add More Images",
+  "@addMoreImages": {
+    "description": "Add more images button"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading message"
+  },
+  "loadingInfo": "Loading info...",
+  "@loadingInfo": {
+    "description": "Loading info message"
+  },
+  "share": "Share",
+  "@share": {
+    "description": "Share button"
+  },
+  "imagesSaved": "Images Saved",
+  "@imagesSaved": {
+    "description": "Images saved title"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button"
+  },
+  "preview": "Preview",
+  "@preview": {
+    "description": "Preview button"
+  },
+  "viewLocation": "View Location",
+  "@viewLocation": {
+    "description": "View location button"
+  },
+  "shareAll": "Share All",
+  "@shareAll": {
+    "description": "Share all button"
+  },
+  "goHome": "Go to Home",
+  "@goHome": {
+    "description": "Go to home button"
+  },
+  "fullPage": "Full Page",
+  "@fullPage": {
+    "description": "Full page layout"
+  },
+  "sideBySide": "Side by Side",
+  "@sideBySide": {
+    "description": "Side by side layout"
+  },
+  "grid2x2": "Grid 2x2",
+  "@grid2x2": {
+    "description": "2x2 grid layout"
+  },
+  "grid3x2": "Grid 3x2",
+  "@grid3x2": {
+    "description": "3x2 grid layout"
+  },
+  "grid3x3": "Grid 3x3",
+  "@grid3x3": {
+    "description": "3x3 grid layout"
+  },
+  "featureReadView": "Read & View PDFs",
+  "@featureReadView": {
+    "description": "Feature description"
+  },
+  "featureMerge": "Merge Multiple PDFs",
+  "@featureMerge": {
+    "description": "Feature description"
+  },
+  "featureSplit": "Split PDFs",
+  "@featureSplit": {
+    "description": "Feature description"
+  },
+  "featureCompress": "Compress File Size",
+  "@featureCompress": {
+    "description": "Feature description"
+  },
+  "featureToImage": "Convert to Images",
+  "@featureToImage": {
+    "description": "Feature description"
+  },
+  "featureEncrypt": "Encrypt & Secure",
+  "@featureEncrypt": {
+    "description": "Feature description"
+  },
+  "featureUnlock": "Unlock & Remove Passwords",
+  "@featureUnlock": {
+    "description": "Feature description"
+  },
+  "featureToWord": "PDF to Word (RTF/TXT)",
+  "@featureToWord": {
+    "description": "Feature description"
+  },
+  "featureRotate": "Rotate Pages",
+  "@featureRotate": {
+    "description": "Feature description"
+  },
+  "featureWatermark": "Add Watermarks",
+  "@featureWatermark": {
+    "description": "Feature description"
+  },
+  "featureRemove": "Remove Pages",
+  "@featureRemove": {
+    "description": "Feature description"
+  },
+  "featureReorder": "Reorder Pages",
+  "@featureReorder": {
+    "description": "Feature description"
+  },
+  "featureImageToPdf": "Image to PDF",
+  "@featureImageToPdf": {
+    "description": "Feature description"
+  },
+  "featureWordToPdf": "Word to PDF",
+  "@featureWordToPdf": {
+    "description": "Feature description"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language"
+  },
+  "turkish": "Turkish",
+  "@turkish": {
+    "description": "Turkish language"
+  },
+  "german": "German",
+  "@german": {
+    "description": "German language"
+  },
+  "selectFile": "Select File",
+  "@selectFile": {
+    "description": "Select file button"
+  },
+  "noFileSelected": "No file selected",
+  "@noFileSelected": {
+    "description": "No file selected message"
+  },
+  "processing": "Processing...",
+  "@processing": {
+    "description": "Processing message"
+  },
+  "success": "Success!",
+  "@success": {
+    "description": "Success message"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error message"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+  "selectFiles": "Select Files",
+  "@selectFiles": {
+    "description": "Select multiple files"
+  },
+  "pdfFiles": "PDF Files",
+  "@pdfFiles": {
+    "description": "PDF files label"
+  },
+  "imageFiles": "Image Files",
+  "@imageFiles": {
+    "description": "Image files label"
+  },
+  "wordFiles": "Word Files",
+  "@wordFiles": {
+    "description": "Word files label"
+  },
+  "reorderingPages": "Reordering pages...",
+  "@reorderingPages": {
+    "description": "Status message when reordering"
+  },
+  "processingPage": "Processing page {page} of {total}...",
+  "@processingPage": {
+    "description": "Status message for page processing",
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "errorReorderingPages": "Error reordering pages: {error}",
+  "@errorReorderingPages": {
+    "description": "Error message for reordering",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pagesReorderedSuccessfully": "Pages Reordered Successfully",
+  "@pagesReorderedSuccessfully": {
+    "description": "Success message for reordering"
+  },
+  "resetOrder": "Reset Order",
+  "@resetOrder": {
+    "description": "Tooltip for reset order"
+  },
+  "reverseOrder": "Reverse Order",
+  "@reverseOrder": {
+    "description": "Tooltip for reverse order"
+  },
+  "selectedFile": "Selected File:",
+  "@selectedFile": {
+    "description": "Label for selected file"
+  },
+  "totalPages": "Total Pages: {count}",
+  "@totalPages": {
+    "description": "Label for total pages",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reorderInstructions": "Drag pages to reorder or use the arrow buttons",
+  "@reorderInstructions": {
+    "description": "Instructions for reordering"
+  },
+  "pageNumber": "Page {number}",
+  "@pageNumber": {
+    "description": "Label for page number",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "originalPosition": "Original position: {number}",
+  "@originalPosition": {
+    "description": "Label for original page position",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "moveToTop": "Move to Top",
+  "@moveToTop": {
+    "description": "Tooltip for move to top"
+  },
+  "moveUp": "Move Up",
+  "@moveUp": {
+    "description": "Tooltip for move up"
+  },
+  "moveDown": "Move Down",
+  "@moveDown": {
+    "description": "Tooltip for move down"
+  },
+  "moveToBottom": "Move to Bottom",
+  "@moveToBottom": {
+    "description": "Tooltip for move to bottom"
+  },
+  "reorderPagesButton": "REORDER PAGES",
+  "@reorderPagesButton": {
+    "description": "Button text to start reordering"
+  },
+  "saveReorderedPdf": "Save Reordered PDF",
+  "@saveReorderedPdf": {
+    "description": "Button text to save reordered PDF"
+  },
+  "selectDifferentFile": "Select Different File",
+  "@selectDifferentFile": {
+    "description": "Button text to select a different file"
+  },
+  "rotatingPdf": "Rotating PDF...",
+  "@rotatingPdf": {
+    "description": "Status message when rotating"
+  },
+  "rotatingPage": "Rotating page {current} of {total}...",
+  "@rotatingPage": {
+    "description": "Status message for page rotation",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "errorRotatingPdf": "Error rotating PDF: {error}",
+  "@errorRotatingPdf": {
+    "description": "Error message for rotation",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfRotatedSuccessfully": "PDF rotated successfully!",
+  "@pdfRotatedSuccessfully": {
+    "description": "Success message for rotation"
+  },
+  "rotateInstructions": "Rotate pages in your PDF document.",
+  "@rotateInstructions": {
+    "description": "Instructions for rotation"
+  },
+  "pagesCount": "{count} Pages",
+  "@pagesCount": {
+    "description": "Label for page count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rotationAngle": "Rotation Angle",
+  "@rotationAngle": {
+    "description": "Label for rotation angle"
+  },
+  "selectPages": "Select Pages",
+  "@selectPages": {
+    "description": "Label for page selection"
+  },
+  "rotatePdfButton": "Rotate PDF",
+  "@rotatePdfButton": {
+    "description": "Button text to start rotation"
+  },
+  "backToHome": "Back to Home",
+  "@backToHome": {
+    "description": "Button to go back to home"
+  },
+  "cannotRemoveAllPages": "Cannot remove all pages. At least one page must remain.",
+  "@cannotRemoveAllPages": {
+    "description": "Error message when trying to remove all pages"
+  },
+  "removingPages": "Removing pages...",
+  "@removingPages": {
+    "description": "Status message when removing pages"
+  },
+  "errorRemovingPages": "Error removing pages: {error}",
+  "@errorRemovingPages": {
+    "description": "Error message for page removal",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pagesRemovedSuccessfully": "Pages Removed Successfully",
+  "@pagesRemovedSuccessfully": {
+    "description": "Success message for page removal"
+  },
+  "removeInstructions": "Select pages to remove from your PDF document",
+  "@removeInstructions": {
+    "description": "Instructions for page removal"
+  },
+  "pagesToRemove": "Pages to Remove: {count}",
+  "@pagesToRemove": {
+    "description": "Label for number of pages to remove",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remainingPages": "Remaining Pages: {count}",
+  "@remainingPages": {
+    "description": "Label for number of remaining pages",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectPagesToRemove": "Select Pages to Remove:",
+  "@selectPagesToRemove": {
+    "description": "Label for page removal selection"
+  },
+  "selectAll": "Select All",
+  "@selectAll": {
+    "description": "Button text to select all items"
+  },
+  "deselectAll": "Deselect All",
+  "@deselectAll": {
+    "description": "Button text to deselect all items"
+  },
+  "clear": "Clear",
+  "@clear": {
+    "description": "Button text to clear selection"
+  },
+  "removeSelectedPagesButton": "REMOVE SELECTED PAGES",
+  "@removeSelectedPagesButton": {
+    "description": "Button text to start page removal"
+  },
+  "toRemove": "To Remove",
+  "@toRemove": {
+    "description": "Label for pages marked for removal"
+  },
+  "selectPagesToRemoveButton": "Select Pages to Remove",
+  "@selectPagesToRemoveButton": {
+    "description": "Button text when no pages are selected for removal"
+  },
+  "removePagesCountButton": "Remove {count} Page(s)",
+  "@removePagesCountButton": {
+    "description": "Button text with count of pages to remove",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addingWatermark": "Adding watermark...",
+  "@addingWatermark": {
+    "description": "Status message when adding watermark"
+  },
+  "addingWatermarkToPage": "Adding watermark to page {current} of {total}...",
+  "@addingWatermarkToPage": {
+    "description": "Status message for page watermark",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "errorAddingWatermark": "Error adding watermark: {error}",
+  "@errorAddingWatermark": {
+    "description": "Error message for watermark",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "watermarkAddedSuccessfully": "Watermark Added Successfully",
+  "@watermarkAddedSuccessfully": {
+    "description": "Success message for watermark"
+  },
+  "livePreview": "Live Preview",
+  "@livePreview": {
+    "description": "Label for live preview section"
+  },
+  "watermarkText": "Watermark Text",
+  "@watermarkText": {
+    "description": "Label for watermark text input"
+  },
+  "opacity": "Opacity",
+  "@opacity": {
+    "description": "Label for opacity setting"
+  },
+  "fontSize": "Font Size",
+  "@fontSize": {
+    "description": "Label for font size setting"
+  },
+  "rotation": "Rotation",
+  "@rotation": {
+    "description": "Label for rotation setting"
+  },
+  "position": "Position",
+  "@position": {
+    "description": "Label for position setting"
+  },
+  "topLeft": "Top Left",
+  "@topLeft": {
+    "description": "Top left position"
+  },
+  "topRight": "Top Right",
+  "@topRight": {
+    "description": "Top right position"
+  },
+  "bottomLeft": "Bottom Left",
+  "@bottomLeft": {
+    "description": "Bottom left position"
+  },
+  "bottomRight": "Bottom Right",
+  "@bottomRight": {
+    "description": "Bottom right position"
+  },
+  "center": "Center",
+  "@center": {
+    "description": "Center position"
+  },
+  "color": "Color",
+  "@color": {
+    "description": "Label for color setting"
+  },
+  "addWatermarkButton": "ADD WATERMARK",
+  "@addWatermarkButton": {
+    "description": "Button text to start adding watermark"
+  },
+  "previewInstructions": "Preview updates as you change settings",
+  "@previewInstructions": {
+    "description": "Instructions for live preview"
+  },
+  "watermarkSettings": "Watermark Settings:",
+  "@watermarkSettings": {
+    "description": "Label for watermark settings section"
+  },
+  "enterWatermarkText": "Enter watermark text",
+  "@enterWatermarkText": {
+    "description": "Hint text for watermark input"
+  },
+  "grey": "Grey",
+  "@grey": {
+    "description": "Grey color"
+  },
+  "red": "Red",
+  "@red": {
+    "description": "Red color"
+  },
+  "blue": "Blue",
+  "@blue": {
+    "description": "Blue color"
+  },
+  "green": "Green",
+  "@green": {
+    "description": "Green color"
+  },
+  "black": "Black",
+  "@black": {
+    "description": "Black color"
+  },
+  "encryptPdfDescription": "Add a password to your PDF file to protect it from unauthorized access.",
+  "@encryptPdfDescription": {
+    "description": "Description for encrypt PDF screen"
+  },
+  "setPasswordDescription": "Set a password for your document.",
+  "@setPasswordDescription": {
+    "description": "Instruction to set password"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password label"
+  },
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password label"
+  },
+  "enterStrongPassword": "Enter a strong password",
+  "@enterStrongPassword": {
+    "description": "Hint for password field"
+  },
+  "reEnterPassword": "Re-enter your password",
+  "@reEnterPassword": {
+    "description": "Hint for confirm password field"
+  },
+  "encryptionNote": "Note: Uses standard, widely-compatible encryption. The file will require a password in standard PDF readers.",
+  "@encryptionNote": {
+    "description": "Note about encryption compatibility"
+  },
+  "encryptingPdf": "Encrypting PDF...",
+  "@encryptingPdf": {
+    "description": "Status message when encrypting"
+  },
+  "pdfEncryptedSuccessfully": "PDF encrypted successfully!",
+  "@pdfEncryptedSuccessfully": {
+    "description": "Success message for encryption"
+  },
+  "pleaseSelectPdfFirst": "Please select a PDF file first.",
+  "@pleaseSelectPdfFirst": {
+    "description": "Error message when no file selected"
+  },
+  "passwordCannotBeEmpty": "Password cannot be empty.",
+  "@passwordCannotBeEmpty": {
+    "description": "Error message when password is empty"
+  },
+  "passwordsDoNotMatch": "Passwords do not match.",
+  "@passwordsDoNotMatch": {
+    "description": "Error message when passwords don't match"
+  },
+  "failedToEncryptPdf": "Failed to encrypt PDF: {error}",
+  "@failedToEncryptPdf": {
+    "description": "Error message for encryption failure",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unlockPdf": "Unlock PDF",
+  "@unlockPdf": {
+    "description": "Title for unlock PDF screen"
+  },
+  "unlockPdfDescription": "Remove password protection from your PDF file.",
+  "@unlockPdfDescription": {
+    "description": "Description for unlock PDF screen"
+  },
+  "unlockingPdf": "Unlocking PDF...",
+  "@unlockingPdf": {
+    "description": "Status message when unlocking"
+  },
+  "invalidPassword": "Invalid password. Please try again.",
+  "@invalidPassword": {
+    "description": "Error message for invalid password"
+  },
+  "pdfNoPassword": "This PDF has no password.",
+  "@pdfNoPassword": {
+    "description": "Info message when the selected PDF has no password"
+  },
+  "pdfUnlockedSuccessfully": "PDF unlocked successfully! The password has been removed.",
+  "@pdfUnlockedSuccessfully": {
+    "description": "Success message for unlocking"
+  },
+  "failedToUnlockPdf": "Failed to unlock PDF: {error}",
+  "@failedToUnlockPdf": {
+    "description": "Error message for unlocking failure",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "enterPdfPassword": "Enter PDF Password",
+  "@enterPdfPassword": {
+    "description": "Label for password field"
+  },
+  "compressPdfDescription": "Reduce the file size of your PDF by compressing its content.",
+  "@compressPdfDescription": {
+    "description": "Description for compress PDF screen"
+  },
+  "compressInstructions": "Adjust the compression level, then click Compress.",
+  "@compressInstructions": {
+    "description": "Instruction for compression"
+  },
+  "compressingPdf": "Compressing PDF...",
+  "@compressingPdf": {
+    "description": "Status message when compressing"
+  },
+  "applyingCompression": "Applying compression...",
+  "@applyingCompression": {
+    "description": "Status message when applying compression"
+  },
+  "savingCompressedPdf": "Saving compressed PDF...",
+  "@savingCompressedPdf": {
+    "description": "Status message when saving"
+  },
+  "pdfCompressedSuccessfully": "PDF compressed successfully!",
+  "@pdfCompressedSuccessfully": {
+    "description": "Success message for compression"
+  },
+  "unableToCompressFurther": "Unable to compress further. Original: {original}, Result: {result}. This PDF is likely already optimized or contains compressed content.",
+  "@unableToCompressFurther": {
+    "description": "Error message when compression doesn't help",
+    "placeholders": {
+      "original": {
+        "type": "String"
+      },
+      "result": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCompressPdf": "Failed to compress PDF: {error}. This method works best for image-heavy PDFs.",
+  "@failedToCompressPdf": {
+    "description": "Error message for compression failure",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "reducedFromTo": "Reduced from {original} to {result}",
+  "@reducedFromTo": {
+    "description": "Status message showing size reduction",
+    "placeholders": {
+      "original": {
+        "type": "String"
+      },
+      "result": {
+        "type": "String"
+      }
+    }
+  },
+  "compressionLevel": "Compression Level",
+  "@compressionLevel": {
+    "description": "Label for compression level"
+  },
+  "bestCompression": "Best (Smallest file size)",
+  "@bestCompression": {
+    "description": "Option for best compression"
+  },
+  "normalCompression": "Normal (Balanced)",
+  "@normalCompression": {
+    "description": "Option for normal compression"
+  },
+  "noCompression": "None (No compression)",
+  "@noCompression": {
+    "description": "Option for no compression"
+  },
+  "loadingPdf": "Loading PDF...",
+  "@loadingPdf": {
+    "description": "Status message when loading PDF"
+  },
+  "errorLoadingPdf": "Error loading PDF: {error}",
+  "@errorLoadingPdf": {
+    "description": "Error message for loading PDF",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pleaseSelectValidPdfFirst": "Please select a valid PDF file first.",
+  "@pleaseSelectValidPdfFirst": {
+    "description": "Error message when no valid file selected"
+  },
+  "compressionSettings": "Compression Settings",
+  "@compressionSettings": {
+    "description": "Title for compression settings"
+  },
+  "maximumCompression": "Maximum Compression",
+  "@maximumCompression": {
+    "description": "Option for maximum compression"
+  },
+  "bestFileSizeReduction": "Best file size reduction",
+  "@bestFileSizeReduction": {
+    "description": "Description for maximum compression"
+  },
+  "balanced": "Balanced",
+  "@balanced": {
+    "description": "Option for balanced compression"
+  },
+  "goodCompressionWithQuality": "Good compression with quality",
+  "@goodCompressionWithQuality": {
+    "description": "Description for balanced compression"
+  },
+  "noCompressionTitle": "No Compression",
+  "@noCompressionTitle": {
+    "description": "Option for no compression"
+  },
+  "preserveOriginalQuality": "Preserve original quality",
+  "@preserveOriginalQuality": {
+    "description": "Description for no compression"
+  },
+  "optimizationTips": "Optimization Tips",
+  "@optimizationTips": {
+    "description": "Title for optimization tips"
+  },
+  "tip1": "PDFs with many images compress better",
+  "@tip1": {
+    "description": "Optimization tip 1"
+  },
+  "tip2": "Text-only PDFs may not reduce much",
+  "@tip2": {
+    "description": "Optimization tip 2"
+  },
+  "tip3": "Already optimized PDFs won't compress",
+  "@tip3": {
+    "description": "Optimization tip 3"
+  },
+  "preparingConversion": "Preparing conversion...",
+  "@preparingConversion": {
+    "description": "Status message when starting conversion"
+  },
+  "convertingPage": "Converting page {page} of {total}...",
+  "@convertingPage": {
+    "description": "Status message for page conversion",
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "pdfConvertedToImagesSuccess": "PDF converted to images successfully!",
+  "@pdfConvertedToImagesSuccess": {
+    "description": "Success message for PDF to Image conversion"
+  },
+  "readyToConvert": "Ready to Convert",
+  "@readyToConvert": {
+    "description": "Title when file is selected"
+  },
+  "pdfToImageDescription": "Each PDF page will be converted to a separate image file with Preview, Save, and Share options.",
+  "@pdfToImageDescription": {
+    "description": "Description for PDF to Image tool"
+  },
+  "convertToImages": "Convert to Images",
+  "@convertToImages": {
+    "description": "Button text to start conversion"
+  },
+  "pdfToImageLongDescription": "Convert every page of a PDF into a high-quality PNG or JPEG image.",
+  "@pdfToImageLongDescription": {
+    "description": "Long description for PDF to Image tool"
+  },
+  "outputFormat": "Output Format",
+  "@outputFormat": {
+    "description": "Label for output format selection"
+  },
+  "losslessBestQuality": "Lossless, best quality",
+  "@losslessBestQuality": {
+    "description": "Description for PNG format"
+  },
+  "smallerFileSize": "Smaller file size",
+  "@smallerFileSize": {
+    "description": "Description for JPEG format"
+  },
+  "jpegQuality": "JPEG Quality",
+  "@jpegQuality": {
+    "description": "Label for JPEG quality slider"
+  },
+  "low": "Low",
+  "@low": {
+    "description": "Label for low quality"
+  },
+  "high": "High",
+  "@high": {
+    "description": "Label for high quality"
+  },
+  "errorConvertingPdfToImages": "Error converting PDF to images: {error}",
+  "@errorConvertingPdfToImages": {
+    "description": "Error message for conversion",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noImagesCreated": "No images were created",
+  "@noImagesCreated": {
+    "description": "Error message when no images were generated"
+  },
+  "pdfToWord": "PDF to Word/Text",
+  "@pdfToWord": {
+    "description": "Title for PDF to Word tool"
+  },
+  "extractingText": "Extracting text...",
+  "@extractingText": {
+    "description": "Status message when extracting text"
+  },
+  "noTextExtractedError": "No text could be extracted from this PDF. The file may contain only images or have text in a non-standard format.",
+  "@noTextExtractedError": {
+    "description": "Error message when no text is found"
+  },
+  "failedToExtractText": "Failed to extract text: {error}",
+  "@failedToExtractText": {
+    "description": "Error message for text extraction",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rtfExportSuccess": "Document exported successfully as RTF! You can open it with Microsoft Word.",
+  "@rtfExportSuccess": {
+    "description": "Success message for RTF export"
+  },
+  "textExtractSuccess": "Text extracted successfully!",
+  "@textExtractSuccess": {
+    "description": "Success message for text extraction"
+  },
+  "pdfToWordDescription": "Convert your PDF to Word-compatible RTF or plain text.",
+  "@pdfToWordDescription": {
+    "description": "Description for PDF to Word tool"
+  },
+  "chooseOutputFormat": "Choose Output Format",
+  "@chooseOutputFormat": {
+    "description": "Label for format selection"
+  },
+  "wordRtf": "Word (RTF)",
+  "@wordRtf": {
+    "description": "Option for RTF format"
+  },
+  "bestForEditing": "Best for editing",
+  "@bestForEditing": {
+    "description": "Description for RTF format"
+  },
+  "textTxt": "Text (TXT)",
+  "@textTxt": {
+    "description": "Option for TXT format"
+  },
+  "plainTextOnly": "Plain text only",
+  "@plainTextOnly": {
+    "description": "Description for TXT format"
+  },
+  "convertNow": "Convert Now",
+  "@convertNow": {
+    "description": "Button text to start conversion"
+  },
+  "outputFormatLabel": "Output: {format}",
+  "@outputFormatLabel": {
+    "description": "Label showing selected output format",
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "selectWordDocError": "Please select a Word document (.docx). Note: .doc is not supported yet.",
+  "@selectWordDocError": {
+    "description": "Error message for unsupported Word format"
+  },
+  "convertingWordToPdf": "Converting Word to PDF...",
+  "@convertingWordToPdf": {
+    "description": "Status message when converting Word to PDF"
+  },
+  "wordDocEmptyError": "The Word document is empty or could not be read.",
+  "@wordDocEmptyError": {
+    "description": "Error message when Word doc is empty"
+  },
+  "wordToPdfConvertSuccess": "Word document converted to PDF successfully!",
+  "@wordToPdfConvertSuccess": {
+    "description": "Success message for Word to PDF conversion"
+  },
+  "wordToPdfDescription": "Convert your Word documents (.docx, .doc) to high-quality PDF.",
+  "@wordToPdfDescription": {
+    "description": "Description for Word to PDF tool"
+  },
+  "failedToConvertWordToPdf": "Failed to convert Word to PDF: {error}\n\nNote: Only text content is supported in this version.",
+  "@failedToConvertWordToPdf": {
+    "description": "Error message for Word to PDF conversion",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "dropWordFileHere": "Drop Word file here or click to browse",
+  "@dropWordFileHere": {
+    "description": "Label for Word file dropzone"
+  },
+  "pdfTools": "PDF Tools",
+  "unlock": "Unlock",
+  "converting": "Converting...",
+  "orientation": "Orientation",
+  "convert": "Convert",
+  "merging": "Merging...",
+  "splitting": "Splitting...",
+  "convertToPdf": "Convert to PDF",
+  "viewSearchAnnotate": "View, Search & Annotate",
+  "combineFiles": "Combine Files",
+  "extractPages": "Extract Pages",
+  "reduceSize": "Reduce Size",
+  "addPassword": "Add Password",
+  "removePass": "Remove Pass",
+  "turnPages": "Turn Pages",
+  "deletePages": "Delete Pages",
+  "arrangePages": "Arrange Pages",
+  "addTextImage": "Add Text/Image",
+  "pngJpeg": "PNG/JPEG",
+  "toRtfTxt": "To RTF/TXT",
+  "convertImages": "Convert Images",
+  "textToPdf": "Text to PDF",
+  "convertTxt": "Convert TXT/RTF",
+  "textToPdfDescription": "Convert plain text (.txt) or Rich Text (.rtf) files to PDF format.",
+  "clickToSelectFile": "Click to select {fileType} file{plural}",
+  "@clickToSelectFile": {
+    "description": "File selection prompt",
+    "placeholders": {
+      "fileType": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "youCanSelectMultiple": "You can select multiple {fileType} files",
+  "@youCanSelectMultiple": {
+    "description": "Multiple file selection hint",
+    "placeholders": {
+      "fileType": {
+        "type": "String"
+      }
+    }
+  },
+  "supportedFormats": "Supported: {formats}",
+  "@supportedFormats": {
+    "description": "Supported file formats",
+    "placeholders": {
+      "formats": {
+        "type": "String"
+      }
+    }
+  },
+  "notepad": "Notepad to PDF",
+  "@notepad": {
+    "description": "Title for Notepad tool"
+  },
+  "notepadDescription": "Create rich text notes with images and styles, then save as PDF",
+  "@notepadDescription": {
+    "description": "Description for Notepad tool"
+  },
+  "featureNotepad": "Create Rich PDF Notes",
+  "@featureNotepad": {
+    "description": "Feature description"
+  },
+  "saveAsPdf": "Save as PDF",
+  "@saveAsPdf": {
+    "description": "Button to save as PDF"
+  },
+  "insertImage": "Insert Image",
+  "@insertImage": {
+    "description": "Tooltip for insert image"
+  },
+  "pleaseEnterSomeText": "Please enter some text first",
+  "@pleaseEnterSomeText": {
+    "description": "Error message when text is empty"
+  },
+  "creatingPdf": "Creating PDF...",
+  "@creatingPdf": {
+    "description": "Loading message when creating PDF"
+  },
+  "pdfCreatedSuccessfully": "PDF created successfully!",
+  "@pdfCreatedSuccessfully": {
+    "description": "Success message after PDF creation"
+  },
+  "selectColor": "Select Color",
+  "@selectColor": {
+    "description": "Title for color picker dialog"
+  },
+  "selectFontSize": "Select Font Size",
+  "@selectFontSize": {
+    "description": "Title for font size picker dialog"
+  },
+  "selectFont": "Select Font",
+  "@selectFont": {
+    "description": "Title for font picker dialog"
+  },
+  "bold": "Bold",
+  "@bold": {
+    "description": "Tooltip for bold button"
+  },
+  "italic": "Italic",
+  "@italic": {
+    "description": "Tooltip for italic button"
+  },
+  "underline": "Underline",
+  "@underline": {
+    "description": "Tooltip for underline button"
+  },
+  "textColor": "Text Color",
+  "@textColor": {
+    "description": "Tooltip for color button"
+  },
+  "select": "Select",
+  "@select": {
+    "description": "Select button text"
+  },
+  "backToHome": "Back to Home",
+  "@backToHome": {
+    "description": "Link to go back to home screen"
+  },
+  "myFiles": "My Files",
+  "@myFiles": {
+    "description": "My files folder browser title"
+  },
+  "sortByName": "Sort by Name",
+  "@sortByName": {
+    "description": "Sort by name option"
+  },
+  "sortByDate": "Sort by Date",
+  "@sortByDate": {
+    "description": "Sort by date option"
+  },
+  "sortBySize": "Sort by Size",
+  "@sortBySize": {
+    "description": "Sort by size option"
+  },
+  "noFilesFound": "No files found in this folder.",
+  "@noFilesFound": {
+    "description": "Message when folder is empty"
+  },
+  "errorOpeningFolder": "Could not open the folder.",
+  "@errorOpeningFolder": {
+    "description": "Error message when folder cannot be opened"
+  },
+  "errorOpeningFile": "Could not open the file.",
+  "@errorOpeningFile": {
+    "description": "Error message when a file cannot be opened"
+  },
+  "errorDeletingFile": "Could not delete the file.",
+  "@errorDeletingFile": {
+    "description": "Error message when a file cannot be deleted"
+  },
+  "openFile": "Open",
+  "@openFile": {
+    "description": "Open file button"
+  },
+  "deleteFile": "Delete",
+  "@deleteFile": {
+    "description": "Delete file button"
+  },
+  "confirmDelete": "Delete File?",
+  "@confirmDelete": {
+    "description": "Delete confirmation dialog title"
+  },
+  "confirmDeleteMessage": "Are you sure you want to delete {name}?",
+  "@confirmDeleteMessage": {
+    "description": "Delete confirmation message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fileDeletedSuccess": "File deleted.",
+  "@fileDeletedSuccess": {
+    "description": "File deleted success message"
+  }
+}

@@ -1,0 +1,144 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'web_download_stub.dart' if (dart.library.js_interop) 'web_download.dart'
+    as web_dl;
+
+class FileUtils {
+  static const _mediaScannerChannel =
+      MethodChannel('com.software41.pdftoolkit/media_scanner');
+
+  /// Notify Android MediaStore about a newly saved file so all apps can see it.
+  static Future<void> scanFileForMediaStore(String filePath) async {
+    if (kIsWeb || !Platform.isAndroid) return;
+    try {
+      await _mediaScannerChannel.invokeMethod('scanFile', {'path': filePath});
+    } catch (_) {}
+  }
+
+  /// Save bytes to the public Downloads folder on Android using MediaStore.
+  /// Returns the saved path on success, or null on failure / non-Android.
+  static Future<String?> saveToDownloads(Uint8List bytes, String fileName) async {
+    if (kIsWeb || !Platform.isAndroid) return null;
+    try {
+      return await _mediaScannerChannel.invokeMethod(
+        'saveToDownloads',
+        {'fileName': fileName, 'bytes': bytes},
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Write bytes to file and trigger MediaStore scan on Android.
+  static Future<void> writeAndScan(File file, List<int> bytes) async {
+    await file.writeAsBytes(bytes);
+    await scanFileForMediaStore(file.path);
+  }
+
+  /// Write string to file and trigger MediaStore scan on Android.
+  static Future<void> writeStringAndScan(File file, String content) async {
+    await file.writeAsString(content);
+    await scanFileForMediaStore(file.path);
+  }
+
+  /// Request storage permissions for Android
+  static Future<bool> requestStoragePermission() async {
+    if (kIsWeb) return true;
+
+    // Files are selected through the system picker and saved to app-controlled
+    // or user-chosen locations, so no broad media/storage permission is needed.
+    return true;
+  }
+
+  /// Open the directory in system file manager
+  static Future<void> openOutputDirectory(String? customDirectory) async {
+    final directory = await getOutputDirectory(customDirectory);
+
+    if (Platform.isAndroid) {
+      try {
+        final path = directory.path;
+        final Uri fileUri = Uri.file(path);
+        if (await canLaunchUrl(fileUri)) {
+          await launchUrl(fileUri, mode: LaunchMode.externalApplication);
+          return;
+        }
+
+        // Fallback for public downloads-style locations.
+        final Uri folderUri = Uri.parse(
+            'content://com.android.externalstorage.documents/document/primary%3ADownload%2FPDFToolkit');
+        if (await canLaunchUrl(folderUri)) {
+          await launchUrl(folderUri, mode: LaunchMode.externalApplication);
+        } else {
+          // Fallback to general downloads if specific folder fails.
+          final Uri downloadsUri = Uri.parse(
+              'content://com.android.externalstorage.documents/root/primary');
+          if (await canLaunchUrl(downloadsUri)) {
+            await launchUrl(downloadsUri, mode: LaunchMode.externalApplication);
+          }
+        }
+      } catch (e) {
+        final Uri fileUri = Uri.file(directory.path);
+        if (await canLaunchUrl(fileUri)) {
+          await launchUrl(fileUri, mode: LaunchMode.externalApplication);
+        }
+      }
+    } else {
+      final Uri folderUri = Uri.file(directory.path);
+      if (await canLaunchUrl(folderUri)) {
+        await launchUrl(folderUri);
+      }
+    }
+  }
+
+  /// Get the output directory for saving files based on user settings
+  /// Falls back to Documents directory if custom directory is not set or invalid
+  static Future<Directory> getOutputDirectory(String? customDirectory) async {
+    if (kIsWeb) {
+      // On web, return a dummy directory (files are downloaded via browser)
+      return Directory('');
+    }
+
+    if (customDirectory != null && customDirectory.isNotEmpty) {
+      final customDir = Directory(customDirectory);
+      try {
+        if (!await customDir.exists()) {
+          await customDir.create(recursive: true);
+        }
+        return customDir;
+      } catch (e) {
+        // If custom directory fails, fall back
+      }
+    }
+
+    // Default to app documents on Android so file access works without
+    // broad external storage permissions.
+    if (Platform.isAndroid) {
+      final directory = await getApplicationDocumentsDirectory();
+      try {
+        if (!await directory.exists()) {
+          await directory.create(recursive: true);
+        }
+        return directory;
+      } catch (e) {
+        // Fallback to app documents if directory creation fails.
+      }
+    }
+
+    return await getApplicationDocumentsDirectory();
+  }
+
+  /// Format file size in human-readable format
+  static String formatFileSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+
+  /// Trigger a browser download on web
+  static Future<void> downloadBytesWeb(Uint8List bytes, String fileName) async {
+    web_dl.downloadFileWeb(bytes, fileName);
+  }
+}

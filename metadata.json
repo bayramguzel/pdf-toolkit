@@ -1,0 +1,5 @@
+{
+  "name": "React PDF Viewer & Converter",
+  "description": "A web application built with React and Tailwind CSS to view PDF files locally in the browser and convert their pages into downloadable PNG images. This project demonstrates core concepts of file handling and canvas rendering, which can serve as a blueprint for similar applications in other ecosystems like Flutter/Dart.",
+  "requestFramePermissions": []
+}
