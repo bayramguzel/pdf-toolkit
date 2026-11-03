@@ -58,6 +58,7 @@ upload-keystore.jks
 
 # Build archives & local zips
 *.zip
+*.ipa
 
 # Local build leftovers
 android/build/
