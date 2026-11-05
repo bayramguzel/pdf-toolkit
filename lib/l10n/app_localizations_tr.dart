@@ -1042,4 +1042,29 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fileDeletedSuccess => 'Dosya silindi.';
+
+  @override
+  String get saveToFiles => 'Dosyalar\'a Kaydet';
+
+  @override
+  String get iosFilesHint => 'Dosyalar › iPhone\'um › PDF Toolkit';
+
+  @override
+  String get chooseSaveLocationHint =>
+      'iPhone\'da bir kopya tutmak için “Dosyalar\'a Kaydet”i seçin.';
+
+  @override
+  String get savedFilesLocation => 'Kaydedilen dosyaların konumu';
+
+  @override
+  String get openInFiles => 'Dosyalar\'da Aç';
+
+  @override
+  String get chooseImageSource => 'Görselleri şuradan ekle';
+
+  @override
+  String get photoLibrary => 'Fotoğraf Kitaplığı';
+
+  @override
+  String get browseFiles => 'Dosyalar';
 }

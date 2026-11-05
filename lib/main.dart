@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'l10n/app_localizations.dart';
@@ -20,6 +21,8 @@ void main() async {
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
+        // iOS uses the inverse semantics: dark background => light icons.
+        statusBarBrightness: Brightness.dark,
       ),
     );
   }
@@ -27,7 +30,7 @@ void main() async {
   // Check for incoming intent BEFORE showing splash.
   // If the app was opened by tapping a PDF file, skip splash entirely.
   String? incomingFilePath;
-  if (!kIsWeb) {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     try {
       final initialMedia =
           await ReceiveSharingIntent.instance.getInitialMedia();

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:pdf_toolkit/utils/file_utils.dart';
+import 'package:pdf_toolkit/utils/platform_helper.dart';
 
 class ImageGallerySuccessScreen extends StatelessWidget {
   /// Mobile: provide [imageFiles]. Web: provide [imageBytes] + [imageNames].
@@ -89,13 +90,24 @@ class ImageGallerySuccessScreen extends StatelessWidget {
     }
   }
 
-  void _showSavedLocation(BuildContext context) {
+  Future<void> _showSavedLocation(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     if (imageFiles == null || imageFiles!.isEmpty) return;
     final fullPath = imageFiles!.first.path;
     final lastSeparator = fullPath.lastIndexOf(Platform.pathSeparator);
     final directory =
         lastSeparator != -1 ? fullPath.substring(0, lastSeparator) : fullPath;
+
+    if (PlatformHelper.isIOS) {
+      // Show the Files app where the app's Documents folder is visible.
+      final opened = await FileUtils.openDirectoryPath(directory);
+      if (!opened && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.iosFilesHint)),
+        );
+      }
+      return;
+    }
 
     showDialog(
       context: context,
@@ -195,6 +207,14 @@ class ImageGallerySuccessScreen extends StatelessWidget {
               '$_count image(s) ${kIsWeb ? "ready to download" : "saved"}',
               style: TextStyle(fontSize: 16, color: Colors.grey[400]),
             ),
+            if (!kIsWeb && PlatformHelper.isIOS) ...[
+              const SizedBox(height: 6),
+              Text(
+                l10n.iosFilesHint,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              ),
+            ],
             const SizedBox(height: 16),
             Wrap(
               spacing: 12,
@@ -215,8 +235,12 @@ class ImageGallerySuccessScreen extends StatelessWidget {
                 else ...[
                   ElevatedButton.icon(
                     onPressed: () => _showSavedLocation(context),
-                    icon: const Icon(Icons.info_outline),
-                    label: Text(l10n.viewLocation),
+                    icon: Icon(PlatformHelper.isIOS
+                        ? Icons.folder_copy_outlined
+                        : Icons.info_outline),
+                    label: Text(PlatformHelper.isIOS
+                        ? l10n.openInFiles
+                        : l10n.viewLocation),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       padding: const EdgeInsets.symmetric(

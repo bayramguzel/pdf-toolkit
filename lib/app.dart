@@ -10,6 +10,7 @@ import 'dart:async';
 import 'providers/app_state.dart';
 import 'providers/settings_provider.dart';
 import 'services/ad_service.dart';
+import 'utils/platform_helper.dart';
 import 'widgets/settings_drawer.dart';
 import 'screens/home_screen.dart';
 import 'screens/pdf_reader_screen.dart';
@@ -60,7 +61,7 @@ class _PdfToolkitAppState extends State<PdfToolkitApp> {
     }
 
     // Skip mobile-specific features on web
-    if (!kIsWeb) {
+    if (!kIsWeb && PlatformHelper.isAndroid) {
       // For sharing or opening files while the app is in memory
       _intentDataStreamSubscription =
           ReceiveSharingIntent.instance.getMediaStream().listen((value) {
@@ -92,7 +93,7 @@ class _PdfToolkitAppState extends State<PdfToolkitApp> {
 
   @override
   void dispose() {
-    if (!kIsWeb) {
+    if (!kIsWeb && PlatformHelper.isAndroid) {
       _intentDataStreamSubscription.cancel();
     }
     super.dispose();
@@ -208,12 +209,14 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   bool _isVipActive = false;
   Timer? _vipTimer;
+  Offset? _edgeSwipeStart;
 
   @override
   void initState() {
     super.initState();
     _checkVipStatus();
-    _vipTimer = Timer.periodic(const Duration(seconds: 1), (_) => _checkVipStatus());
+    _vipTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => _checkVipStatus());
   }
 
   Future<void> _checkVipStatus() async {
@@ -250,18 +253,23 @@ class _MainScreenState extends State<MainScreen> {
               if (appState.activeTool != ToolType.home) {
                 appState.goHome();
               } else {
-                // Eğer anasayfadaysak ve geri tuşuna basıldıysa uygulamayı kapat
-                SystemNavigator.pop();
+                // Android: back on the home screen leaves the app.
+                // iOS has no system back button; do nothing.
+                if (PlatformHelper.isAndroid) {
+                  SystemNavigator.pop();
+                }
               }
             }
           },
           child: Scaffold(
             appBar: AppBar(
-              centerTitle: false,
+              centerTitle: PlatformHelper.isIOS,
               titleSpacing: appState.activeTool == ToolType.home ? 16 : 0,
               leading: appState.activeTool != ToolType.home
                   ? IconButton(
-                      icon: const Icon(Icons.arrow_back),
+                      icon: Icon(PlatformHelper.isIOS
+                          ? Icons.arrow_back_ios_new
+                          : Icons.arrow_back),
                       onPressed: () => appState.goHome(),
                     )
                   : null,
@@ -291,7 +299,9 @@ class _MainScreenState extends State<MainScreen> {
                               color: Colors.redAccent,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Theme.of(context).appBarTheme.backgroundColor ??
+                                color: Theme.of(context)
+                                        .appBarTheme
+                                        .backgroundColor ??
                                     Theme.of(context).primaryColor,
                                 width: 1.5,
                               ),
@@ -348,54 +358,77 @@ class _MainScreenState extends State<MainScreen> {
             drawer: appState.activeTool == ToolType.home
                 ? const SettingsDrawer()
                 : null,
-            body: SafeArea(
-              // Reserve space for Android nav bar at the bottom and
-              // status bar at the top (AppBar already handles top).
-              top: false,
-              child: Column(
-                children: [
-                  Expanded(child: _buildCurrentScreen(appState)),
-                  if (appState.activeTool != ToolType.home) ...[
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.0),
-                      child: LevelPlayBannerWidget(height: 50),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 6.0),
-                      child: Center(
-                        child: SizedBox(
-                          height: 44,
-                          child: OutlinedButton.icon(
-                            onPressed: () => appState.goHome(),
-                            icon: Icon(
-                              Icons.home_rounded,
-                              size: 20,
-                              color: settings.primaryColor,
-                            ),
-                            label: Text(
-                              AppLocalizations.of(context)!.backToHome,
-                              style: TextStyle(
+            body: Listener(
+              // iOS-style edge swipe from the left border returns home.
+              // A Listener never competes with child gestures, so scrolling
+              // and the PDF viewer keep working normally.
+              onPointerDown: PlatformHelper.isIOS
+                  ? (event) => _edgeSwipeStart = event.position
+                  : null,
+              onPointerUp: PlatformHelper.isIOS
+                  ? (event) {
+                      final start = _edgeSwipeStart;
+                      _edgeSwipeStart = null;
+                      if (start == null ||
+                          appState.activeTool == ToolType.home) {
+                        return;
+                      }
+                      final dx = event.position.dx - start.dx;
+                      final dy = (event.position.dy - start.dy).abs();
+                      if (start.dx <= 40 && dx >= 80 && dy <= dx) {
+                        appState.goHome();
+                      }
+                    }
+                  : null,
+              child: SafeArea(
+                // Reserve space for Android nav bar at the bottom and
+                // status bar at the top (AppBar already handles top).
+                top: false,
+                child: Column(
+                  children: [
+                    Expanded(child: _buildCurrentScreen(appState)),
+                    if (appState.activeTool != ToolType.home) ...[
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: LevelPlayBannerWidget(height: 50),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 6.0),
+                        child: Center(
+                          child: SizedBox(
+                            height: 44,
+                            child: OutlinedButton.icon(
+                              onPressed: () => appState.goHome(),
+                              icon: Icon(
+                                Icons.home_rounded,
+                                size: 20,
                                 color: settings.primaryColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
                               ),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                  color: settings.primaryColor.withAlpha(160),
-                                  width: 1.5),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24)),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 28, vertical: 0),
+                              label: Text(
+                                AppLocalizations.of(context)!.backToHome,
+                                style: TextStyle(
+                                  color: settings.primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                    color: settings.primaryColor.withAlpha(160),
+                                    width: 1.5),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24)),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 28, vertical: 0),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),

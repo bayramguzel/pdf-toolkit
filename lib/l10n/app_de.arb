@@ -327,5 +327,13 @@
   "deleteFile": "Löschen",
   "confirmDelete": "Datei löschen?",
   "confirmDeleteMessage": "Möchten Sie {name} wirklich löschen?",
-  "fileDeletedSuccess": "Datei gelöscht."
+  "fileDeletedSuccess": "Datei gelöscht.",
+  "saveToFiles": "In Dateien sichern",
+  "iosFilesHint": "Dateien › Auf meinem iPhone › PDF Toolkit",
+  "chooseSaveLocationHint": "Wählen Sie „In Dateien sichern“, um eine Kopie auf dem iPhone zu behalten.",
+  "savedFilesLocation": "Speicherort der Dateien",
+  "openInFiles": "In Dateien öffnen",
+  "chooseImageSource": "Bilder hinzufügen aus",
+  "photoLibrary": "Fotomediathek",
+  "browseFiles": "Dateien"
 }

@@ -5,7 +5,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>Pdf Toolkit</string>
+		<string>PDF Toolkit</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -47,5 +47,24 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<true/>
+		<!-- Expose the app's Documents folder in the Files app ("On My iPhone"). -->
+		<key>UIFileSharingEnabled</key>
+		<true/>
+		<key>LSSupportsOpeningDocumentsInPlace</key>
+		<true/>
+		<!-- Permission descriptions required by image/file pickers. -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>PDF Toolkit needs access to your photo library so you can turn photos into PDF files and add images to notes.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>PDF Toolkit saves images you create to your photo library.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>PDF Toolkit can use the camera so you can capture a document and convert it to PDF.</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>mailto</string>
+			<string>shareddocuments</string>
+		</array>
 	</dict>
 </plist>

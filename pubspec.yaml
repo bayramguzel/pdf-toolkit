@@ -1,7 +1,7 @@
 name: pdf_toolkit
 description: A comprehensive PDF toolkit application with advanced PDF manipulation features (merge, split, compress, protect) and a rich-text notepad for creating professional documents with images and styling.
 publish_to: 'none'
-version: 2.5.3+53
+version: 2.5.4+54
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
@@ -22,6 +22,9 @@ dependencies:
   
   # File picking
   file_picker: ^11.0.2
+
+  # Photo library picking (iOS: Photos app for image-to-PDF)
+  image_picker: ^1.2.3
   
   # Image handling
   image: ^4.2.0

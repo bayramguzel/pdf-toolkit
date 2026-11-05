@@ -1368,5 +1368,37 @@
   "fileDeletedSuccess": "File deleted.",
   "@fileDeletedSuccess": {
     "description": "File deleted success message"
+  },
+  "saveToFiles": "Save to Files",
+  "@saveToFiles": {
+    "description": "iOS: open the share sheet so the user can save a copy anywhere"
+  },
+  "iosFilesHint": "Files app › On My iPhone › PDF Toolkit",
+  "@iosFilesHint": {
+    "description": "iOS: where app documents are visible"
+  },
+  "chooseSaveLocationHint": "Choose “Save to Files” to keep a copy on your iPhone.",
+  "@chooseSaveLocationHint": {
+    "description": "iOS: hint shown after opening the share sheet"
+  },
+  "savedFilesLocation": "Saved files location",
+  "@savedFilesLocation": {
+    "description": "iOS: settings row title for the Files app location"
+  },
+  "openInFiles": "Open in Files",
+  "@openInFiles": {
+    "description": "iOS: button that opens the Files app"
+  },
+  "chooseImageSource": "Add images from",
+  "@chooseImageSource": {
+    "description": "iOS: sheet title when picking images"
+  },
+  "photoLibrary": "Photo Library",
+  "@photoLibrary": {
+    "description": "iOS: pick images from Photos"
+  },
+  "browseFiles": "Files",
+  "@browseFiles": {
+    "description": "iOS: pick images from the Files app"
   }
 }

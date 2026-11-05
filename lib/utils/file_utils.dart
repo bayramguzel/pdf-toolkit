@@ -20,7 +20,8 @@ class FileUtils {
 
   /// Save bytes to the public Downloads folder on Android using MediaStore.
   /// Returns the saved path on success, or null on failure / non-Android.
-  static Future<String?> saveToDownloads(Uint8List bytes, String fileName) async {
+  static Future<String?> saveToDownloads(
+      Uint8List bytes, String fileName) async {
     if (kIsWeb || !Platform.isAndroid) return null;
     try {
       return await _mediaScannerChannel.invokeMethod(
@@ -53,17 +54,38 @@ class FileUtils {
     return true;
   }
 
-  /// Open the directory in system file manager
-  static Future<void> openOutputDirectory(String? customDirectory) async {
+  /// Open the directory in system file manager.
+  /// Returns true when a file manager / Files app was opened.
+  static Future<bool> openOutputDirectory(String? customDirectory) async {
     final directory = await getOutputDirectory(customDirectory);
+    return openDirectoryPath(directory.path);
+  }
+
+  /// Open a directory in the platform file manager.
+  ///
+  /// iOS gives apps no way to open their sandbox folder in a file manager, so
+  /// this opens the Files app instead, where the app's Documents folder is
+  /// listed (requires UIFileSharingEnabled in Info.plist).
+  static Future<bool> openDirectoryPath(String path) async {
+    if (kIsWeb) return false;
+
+    if (Platform.isIOS) {
+      try {
+        return await launchUrl(
+          Uri.parse('shareddocuments://'),
+          mode: LaunchMode.externalApplication,
+        );
+      } catch (_) {
+        return false;
+      }
+    }
 
     if (Platform.isAndroid) {
       try {
-        final path = directory.path;
         final Uri fileUri = Uri.file(path);
         if (await canLaunchUrl(fileUri)) {
           await launchUrl(fileUri, mode: LaunchMode.externalApplication);
-          return;
+          return true;
         }
 
         // Fallback for public downloads-style locations.
@@ -71,26 +93,32 @@ class FileUtils {
             'content://com.android.externalstorage.documents/document/primary%3ADownload%2FPDFToolkit');
         if (await canLaunchUrl(folderUri)) {
           await launchUrl(folderUri, mode: LaunchMode.externalApplication);
+          return true;
         } else {
           // Fallback to general downloads if specific folder fails.
           final Uri downloadsUri = Uri.parse(
               'content://com.android.externalstorage.documents/root/primary');
           if (await canLaunchUrl(downloadsUri)) {
             await launchUrl(downloadsUri, mode: LaunchMode.externalApplication);
+            return true;
           }
         }
       } catch (e) {
-        final Uri fileUri = Uri.file(directory.path);
+        final Uri fileUri = Uri.file(path);
         if (await canLaunchUrl(fileUri)) {
           await launchUrl(fileUri, mode: LaunchMode.externalApplication);
+          return true;
         }
       }
-    } else {
-      final Uri folderUri = Uri.file(directory.path);
-      if (await canLaunchUrl(folderUri)) {
-        await launchUrl(folderUri);
-      }
+      return false;
     }
+
+    final Uri folderUri = Uri.file(path);
+    if (await canLaunchUrl(folderUri)) {
+      await launchUrl(folderUri);
+      return true;
+    }
+    return false;
   }
 
   /// Get the output directory for saving files based on user settings

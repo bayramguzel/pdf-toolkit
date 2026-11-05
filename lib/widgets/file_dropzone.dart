@@ -1,9 +1,11 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
+import 'package:pdf_toolkit/utils/platform_helper.dart';
 
 /// Unified file model for both web and mobile.
 /// On mobile: wraps dart:io File. On web: holds bytes + name.
@@ -60,6 +62,61 @@ class FileDropzone extends StatefulWidget {
     this.fileTypeLabel,
   });
 
+  static bool _isImageSelection(List<String>? extensions) {
+    if (extensions == null) return false;
+    const imageExt = {'jpg', 'jpeg', 'png', 'bmp', 'gif', 'heic', 'webp'};
+    return extensions.any((e) => imageExt.contains(e.toLowerCase()));
+  }
+
+  /// iOS only: let the user choose between the Photos library and the Files
+  /// app. Returns null when the caller should continue with the regular
+  /// document picker (Files), and an empty list when the user cancels.
+  static Future<List<PickedFile>?> pickImagesWithSourceSheet(
+      BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final source = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  l10n.chooseImageSource,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(l10n.photoLibrary),
+              onTap: () => Navigator.pop(ctx, 'photos'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.folder_outlined),
+              title: Text(l10n.browseFiles),
+              onTap: () => Navigator.pop(ctx, 'files'),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+
+    if (source == null) return <PickedFile>[];
+    if (source == 'photos') {
+      final images = await ImagePicker().pickMultiImage();
+      return images.map((x) => PickedFile.fromMobile(File(x.path))).toList();
+    }
+    // "Files": fall through to the platform document picker.
+    return null;
+  }
+
   @override
   State<FileDropzone> createState() => _FileDropzoneState();
 }
@@ -70,6 +127,17 @@ class _FileDropzoneState extends State<FileDropzone> {
   Future<void> _pickFiles() async {
     try {
       final extensions = widget.allowedExtensions ?? ['pdf'];
+
+      // iOS: image picking should offer Photos as well as Files.
+      if (PlatformHelper.isIOS &&
+          FileDropzone._isImageSelection(widget.allowedExtensions)) {
+        final photos = await FileDropzone.pickImagesWithSourceSheet(context);
+        if (photos != null) {
+          if (photos.isNotEmpty) widget.onFileSelect(photos);
+          return;
+        }
+      }
+
       final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: extensions,

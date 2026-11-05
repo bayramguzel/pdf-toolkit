@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -13,6 +13,7 @@ import '../widgets/file_dropzone.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 import '../utils/file_utils.dart';
+import '../utils/platform_helper.dart';
 
 class ImageToPdfScreen extends StatefulWidget {
   const ImageToPdfScreen({super.key});
@@ -55,6 +56,15 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
 
   Future<void> _pickMoreImages() async {
     try {
+      // iOS: offer Photos as well as Files.
+      if (PlatformHelper.isIOS) {
+        final photos = await FileDropzone.pickImagesWithSourceSheet(context);
+        if (photos != null) {
+          if (photos.isNotEmpty) _handleFileSelect(photos);
+          return;
+        }
+      }
+
       final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'bmp', 'gif'],
@@ -489,10 +499,12 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
                                         child: Text('A4 (210 \u00D7 297 mm)')),
                                     DropdownMenuItem(
                                         value: 'Letter',
-                                        child: Text('Letter (8.5 \u00D7 11 in)')),
+                                        child:
+                                            Text('Letter (8.5 \u00D7 11 in)')),
                                     DropdownMenuItem(
                                         value: 'Legal',
-                                        child: Text('Legal (8.5 \u00D7 14 in)')),
+                                        child:
+                                            Text('Legal (8.5 \u00D7 14 in)')),
                                     DropdownMenuItem(
                                         value: 'A3',
                                         child: Text('A3 (297 \u00D7 420 mm)')),

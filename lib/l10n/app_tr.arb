@@ -327,5 +327,13 @@
   "deleteFile": "Sil",
   "confirmDelete": "Dosyayı Sil?",
   "confirmDeleteMessage": "{name} dosyasını silmek istediğinizden emin misiniz?",
-  "fileDeletedSuccess": "Dosya silindi."
+  "fileDeletedSuccess": "Dosya silindi.",
+  "saveToFiles": "Dosyalar'a Kaydet",
+  "iosFilesHint": "Dosyalar › iPhone'um › PDF Toolkit",
+  "chooseSaveLocationHint": "iPhone'da bir kopya tutmak için “Dosyalar'a Kaydet”i seçin.",
+  "savedFilesLocation": "Kaydedilen dosyaların konumu",
+  "openInFiles": "Dosyalar'da Aç",
+  "chooseImageSource": "Görselleri şuradan ekle",
+  "photoLibrary": "Fotoğraf Kitaplığı",
+  "browseFiles": "Dosyalar"
 }

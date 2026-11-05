@@ -1983,6 +1983,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'File deleted.'**
   String get fileDeletedSuccess;
+
+  /// iOS: open the share sheet so the user can save a copy anywhere
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Files'**
+  String get saveToFiles;
+
+  /// iOS: where app documents are visible
+  ///
+  /// In en, this message translates to:
+  /// **'Files app › On My iPhone › PDF Toolkit'**
+  String get iosFilesHint;
+
+  /// iOS: hint shown after opening the share sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Choose “Save to Files” to keep a copy on your iPhone.'**
+  String get chooseSaveLocationHint;
+
+  /// iOS: settings row title for the Files app location
+  ///
+  /// In en, this message translates to:
+  /// **'Saved files location'**
+  String get savedFilesLocation;
+
+  /// iOS: button that opens the Files app
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Files'**
+  String get openInFiles;
+
+  /// iOS: sheet title when picking images
+  ///
+  /// In en, this message translates to:
+  /// **'Add images from'**
+  String get chooseImageSource;
+
+  /// iOS: pick images from Photos
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Library'**
+  String get photoLibrary;
+
+  /// iOS: pick images from the Files app
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get browseFiles;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
+import '../utils/platform_helper.dart';
 
 enum _SortOrder { name, dateDesc, sizeDesc }
 
@@ -130,6 +131,11 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
             .selectTool(ToolType.reader, file: file);
         return;
       }
+      if (PlatformHelper.isIOS) {
+        // iOS cannot hand arbitrary sandbox files to other apps via file://.
+        await _shareFile(file);
+        return;
+      }
       final uri = Uri.file(file.path);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -228,6 +234,19 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
                 selected: _sortOrder == _SortOrder.sizeDesc,
                 onTap: () => _changeSortOrder(_SortOrder.sizeDesc),
               ),
+              if (PlatformHelper.isIOS) ...[
+                const SizedBox(width: 4),
+                IconButton(
+                  tooltip: l10n.openInFiles,
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.folder_copy_outlined, size: 20),
+                  onPressed: () {
+                    final settings =
+                        Provider.of<SettingsProvider>(context, listen: false);
+                    FileUtils.openOutputDirectory(settings.saveDirectory);
+                  },
+                ),
+              ],
             ],
           ),
         ),
@@ -253,6 +272,23 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
                                   isDark ? Colors.grey[400] : Colors.grey[600],
                             ),
                           ),
+                          if (PlatformHelper.isIOS) ...[
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 32),
+                              child: Text(
+                                l10n.iosFilesHint,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isDark
+                                      ? Colors.grey[500]
+                                      : Colors.grey[500],
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     )

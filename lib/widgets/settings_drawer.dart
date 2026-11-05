@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
+import '../utils/platform_helper.dart';
 
 class SettingsDrawer extends StatefulWidget {
   const SettingsDrawer({super.key});
@@ -319,8 +320,9 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
 
               const Divider(height: 32),
 
-              // Save Directory Section (mobile only)
-              if (!kIsWeb) ...[
+              // Save Directory Section (Android only — iOS has no directory
+              // picker; the app Documents folder is exposed through Files).
+              if (!kIsWeb && !PlatformHelper.isIOS) ...[
                 ListTile(
                   leading: const Icon(Icons.folder),
                   title: Text(l10n.saveDirectory),
@@ -335,6 +337,17 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                     icon: const Icon(Icons.edit),
                     onPressed: () => _selectSaveDirectory(context, settings),
                   ),
+                ),
+                const Divider(),
+              ],
+
+              // iOS: explain where saved files live and how to reach them.
+              if (PlatformHelper.isIOS) ...[
+                ListTile(
+                  leading: const Icon(Icons.folder_copy_outlined),
+                  title: Text(l10n.savedFilesLocation),
+                  subtitle: Text(l10n.iosFilesHint),
+                  onTap: () => _launchUrl(context, 'shareddocuments://'),
                 ),
                 const Divider(),
               ],
@@ -411,13 +424,14 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 onTap: () =>
                     _launchUrl(context, 'https://tiktok.com/@41software'),
               ),
-              ListTile(
-                leading: const Icon(Icons.android),
-                title: const Text('Google Play'),
-                subtitle: const Text('Download Android App'),
-                onTap: () => _launchUrl(context,
-                    'https://play.google.com/store/apps/details?id=com.software41.pdftoolkit'),
-              ),
+              if (!PlatformHelper.isIOS)
+                ListTile(
+                  leading: const Icon(Icons.android),
+                  title: const Text('Google Play'),
+                  subtitle: const Text('Download Android App'),
+                  onTap: () => _launchUrl(context,
+                      'https://play.google.com/store/apps/details?id=com.software41.pdftoolkit'),
+                ),
 
               const Divider(),
 

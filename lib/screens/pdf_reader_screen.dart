@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import '../widgets/file_dropzone.dart';
 import '../widgets/loading_spinner.dart';
 import '../utils/file_utils.dart';
+import '../utils/platform_helper.dart';
 import '../utils/web_download_stub.dart'
     if (dart.library.js_interop) '../utils/web_download.dart' as web_dl;
 
@@ -54,8 +55,7 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
       _documentLoaded = false;
       _error = null;
       _pdfFile = file;
-      _pdfFileName =
-          file.path.split(RegExp(r'[\\/]')).last;
+      _pdfFileName = file.path.split(RegExp(r'[\\/]')).last;
     });
   }
 
@@ -89,6 +89,24 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
           if (savedPath == null) {
             throw Exception('Could not save to Downloads');
           }
+        } else if (Platform.isIOS) {
+          // iOS sandbox: hand the file to the share sheet so the user can
+          // choose "Save to Files" (or any other destination).
+          await SharePlus.instance.share(
+            ShareParams(
+              files: [XFile(_pdfFile!.path)],
+              text: _pdfFileName ?? 'document.pdf',
+            ),
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.chooseSaveLocationHint),
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
+          return;
         } else {
           Directory? downloadsDir;
           try {
@@ -230,13 +248,16 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                   child: Text(
                     _pdfFileName ?? 'PDF',
                     style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.zoom_out, size: 20, color: Colors.white),
+                  icon:
+                      const Icon(Icons.zoom_out, size: 20, color: Colors.white),
                   onPressed: _documentLoaded
                       ? () {
                           setState(() {
@@ -247,12 +268,14 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                       : null,
                   tooltip: 'Zoom Out',
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
                 Text('${(_zoomLevel * 100).round()}%',
                     style: const TextStyle(fontSize: 12, color: Colors.white)),
                 IconButton(
-                  icon: const Icon(Icons.zoom_in, size: 20, color: Colors.white),
+                  icon:
+                      const Icon(Icons.zoom_in, size: 20, color: Colors.white),
                   onPressed: _documentLoaded
                       ? () {
                           setState(() {
@@ -263,35 +286,47 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                       : null,
                   tooltip: 'Zoom In',
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
                 IconButton(
                   icon: Icon(_isSearchVisible ? Icons.search_off : Icons.search,
                       size: 20, color: Colors.white),
                   onPressed: _documentLoaded
-                      ? () => setState(
-                          () => _isSearchVisible = !_isSearchVisible)
+                      ? () =>
+                          setState(() => _isSearchVisible = !_isSearchVisible)
                       : null,
                   tooltip: 'Search',
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.download, size: 20, color: Colors.white),
+                  icon: Icon(
+                      PlatformHelper.isIOS
+                          ? Icons.ios_share
+                          : Icons.download,
+                      size: 20,
+                      color: Colors.white),
                   onPressed: _downloadPdf,
-                  tooltip: 'Download',
+                  tooltip: PlatformHelper.isIOS
+                      ? l10n.saveToFiles
+                      : 'Download',
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
                 IconButton(
                   icon: const Icon(Icons.share, size: 20, color: Colors.white),
                   onPressed: _sharePdf,
                   tooltip: 'Share',
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.folder_open, size: 20, color: Colors.white),
+                  icon: const Icon(Icons.folder_open,
+                      size: 20, color: Colors.white),
                   onPressed: () => setState(() {
                     _pdfFile = null;
                     _pdfBytes = null;
@@ -301,7 +336,8 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                   }),
                   tooltip: 'Open another file',
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
               ],
             ),

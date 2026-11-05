@@ -1047,4 +1047,29 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get fileDeletedSuccess => 'Datei gelöscht.';
+
+  @override
+  String get saveToFiles => 'In Dateien sichern';
+
+  @override
+  String get iosFilesHint => 'Dateien › Auf meinem iPhone › PDF Toolkit';
+
+  @override
+  String get chooseSaveLocationHint =>
+      'Wählen Sie „In Dateien sichern“, um eine Kopie auf dem iPhone zu behalten.';
+
+  @override
+  String get savedFilesLocation => 'Speicherort der Dateien';
+
+  @override
+  String get openInFiles => 'In Dateien öffnen';
+
+  @override
+  String get chooseImageSource => 'Bilder hinzufügen aus';
+
+  @override
+  String get photoLibrary => 'Fotomediathek';
+
+  @override
+  String get browseFiles => 'Dateien';
 }

@@ -1040,4 +1040,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fileDeletedSuccess => 'File deleted.';
+
+  @override
+  String get saveToFiles => 'Save to Files';
+
+  @override
+  String get iosFilesHint => 'Files app › On My iPhone › PDF Toolkit';
+
+  @override
+  String get chooseSaveLocationHint =>
+      'Choose “Save to Files” to keep a copy on your iPhone.';
+
+  @override
+  String get savedFilesLocation => 'Saved files location';
+
+  @override
+  String get openInFiles => 'Open in Files';
+
+  @override
+  String get chooseImageSource => 'Add images from';
+
+  @override
+  String get photoLibrary => 'Photo Library';
+
+  @override
+  String get browseFiles => 'Files';
 }

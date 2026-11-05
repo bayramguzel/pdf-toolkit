@@ -109,7 +109,25 @@ Sonrasında PDF Toolkit'i açabilirsiniz.
 
 ---
 
-## 6. Alternatif: Mac ile Derleme
+## 6. iOS'ta Dosyalara Erişim ve Kaydetme
+
+iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
+"Downloads" klasörüne doğrudan yazamaz. PDF Toolkit bunu şöyle çözer:
+
+| İşlem | iOS'ta nasıl çalışır |
+| --- | --- |
+| Cihazdaki bir PDF'i açma | **Dosyalar** seçicisi açılır (iCloud Drive, iPhone'um, Google Drive vb.). |
+| Dönüştürülen dosyaları görme | **Dosyalar → iPhone'um → PDF Toolkit** klasörü. (Info.plist'te `UIFileSharingEnabled` açıktır.) |
+| Dosyayı cihaza kaydetme | Sonuç ekranında **Dosyalar'a Kaydet** → paylaşım sayfasından hedef klasörü seçin. |
+| Görsel ekleme (PDF'e) | **Fotoğraf Kitaplığı** veya **Dosyalar** seçilebilir. |
+| Oluşturulan görselleri görme | Yine **Dosyalar → iPhone'um → PDF Toolkit**. |
+
+> Telefonda dosyaları görmek için Dosyalar uygulamasında **Gözat → iPhone'um**
+> altına bakın. Uygulama adı "PDF Toolkit" olarak listelenir.
+
+---
+
+## 7. Alternatif: Mac ile Derleme
 
 Bir Mac'e erişiminiz varsa:
 
@@ -122,7 +140,7 @@ zip -qry PdfToolkit-unsigned.ipa Payload
 
 ---
 
-## 7. Kontrol Listesi
+## 8. Kontrol Listesi
 
 - [ ] Proje GitHub'a yüklendi (`github.com/bayramguzel/pdf-toolkit`).
 - [ ] Actions üzerinde **Build unsigned iOS IPA** çalıştırıldı.

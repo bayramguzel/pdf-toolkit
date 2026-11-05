@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:pdf_toolkit/utils/file_utils.dart';
+import 'package:pdf_toolkit/utils/platform_helper.dart';
 import 'package:pdf_toolkit/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -60,6 +61,7 @@ class OperationSuccessScreen extends StatelessWidget {
   }
 
   Future<void> _handleDownload(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     if (kIsWeb) {
       await FileUtils.downloadBytesWeb(bytes!, _displayName);
       if (context.mounted) {
@@ -67,6 +69,18 @@ class OperationSuccessScreen extends StatelessWidget {
           SnackBar(
             content: Text('Downloading: $_displayName'),
             backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } else if (PlatformHelper.isIOS) {
+      // iOS has no writable "Downloads" folder. The share sheet is the system
+      // way to store a copy anywhere (Files, iCloud Drive, another app).
+      await _handleShare(context);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.chooseSaveLocationHint),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -170,13 +184,32 @@ class OperationSuccessScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     if (!kIsWeb)
                       TextButton.icon(
-                        onPressed: () => FileUtils.openOutputDirectory(
-                            settings.saveDirectory),
-                        icon: const Icon(Icons.folder_open),
-                        label: Text(l10n.openFolder),
+                        onPressed: () async {
+                          final opened = await FileUtils.openOutputDirectory(
+                              settings.saveDirectory);
+                          if (!opened && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(l10n.iosFilesHint)),
+                            );
+                          }
+                        },
+                        icon: Icon(PlatformHelper.isIOS
+                            ? Icons.folder_copy_outlined
+                            : Icons.folder_open),
+                        label: Text(PlatformHelper.isIOS
+                            ? l10n.openInFiles
+                            : l10n.openFolder),
                         style: TextButton.styleFrom(
                             foregroundColor: const Color(0xFF22D3EE)),
                       ),
+                    if (!kIsWeb && PlatformHelper.isIOS) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.iosFilesHint,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -199,8 +232,16 @@ class OperationSuccessScreen extends StatelessWidget {
                   ),
                 ElevatedButton.icon(
                   onPressed: () => _handleDownload(context),
-                  icon: Icon(kIsWeb ? Icons.download : Icons.save),
-                  label: Text(kIsWeb ? 'Download' : l10n.save),
+                  icon: Icon(kIsWeb
+                      ? Icons.download
+                      : PlatformHelper.isIOS
+                          ? Icons.ios_share
+                          : Icons.save),
+                  label: Text(kIsWeb
+                      ? 'Download'
+                      : PlatformHelper.isIOS
+                          ? l10n.saveToFiles
+                          : l10n.save),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 12),
