@@ -329,6 +329,8 @@
   "confirmDeleteMessage": "Möchten Sie {name} wirklich löschen?",
   "fileDeletedSuccess": "Datei gelöscht.",
   "saveToFiles": "In Dateien sichern",
+  "savedToFiles": "In Dateien gesichert",
+  "iosSaveImagesHint": "Tipp: Wählen Sie „In Dateien sichern“, um alle Bilder auf dem iPhone zu behalten.",
   "iosFilesHint": "Dateien › Auf meinem iPhone › PDF Toolkit",
   "chooseSaveLocationHint": "Wählen Sie „In Dateien sichern“, um eine Kopie auf dem iPhone zu behalten.",
   "savedFilesLocation": "Speicherort der Dateien",

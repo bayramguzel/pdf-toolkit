@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
@@ -33,7 +33,10 @@ class ImageGallerySuccessScreen extends StatelessWidget {
       final xFiles = imageFiles!.map((f) => XFile(f.path)).toList();
       await SharePlus.instance.share(
         ShareParams(
-            files: xFiles, text: 'Converted ${imageFiles!.length} image(s)'),
+          files: xFiles,
+          text: 'Converted ${imageFiles!.length} image(s)',
+          sharePositionOrigin: FileUtils.shareAnchorRect(context),
+        ),
       );
     } catch (e) {
       if (context.mounted) {
@@ -49,7 +52,11 @@ class ImageGallerySuccessScreen extends StatelessWidget {
   Future<void> _handleShareSingle(BuildContext context, File file) async {
     try {
       await SharePlus.instance.share(
-        ShareParams(files: [XFile(file.path)], text: 'Check out this image'),
+        ShareParams(
+          files: [XFile(file.path)],
+          text: 'Check out this image',
+          sharePositionOrigin: FileUtils.shareAnchorRect(context),
+        ),
       );
     } catch (e) {
       if (context.mounted) {
@@ -59,6 +66,57 @@ class ImageGallerySuccessScreen extends StatelessWidget {
               backgroundColor: Colors.red),
         );
       }
+    }
+  }
+
+  /// iOS: keeps a copy of one image through the native "Save to Files" panel.
+  Future<void> _saveImageToDevice(BuildContext context, int index) async {
+    final l10n = AppLocalizations.of(context)!;
+    final file = imageFiles![index];
+    String? savedPath;
+    bool panelUnavailable = false;
+    try {
+      savedPath = await FileUtils.saveFileWithPanel(file);
+    } catch (e) {
+      debugPrint('Save to Files panel failed: $e');
+      panelUnavailable = true;
+    }
+    if (!context.mounted) return;
+    if (savedPath != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('${l10n.savedToFiles}\n${FileUtils.baseName(savedPath)}'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+    if (panelUnavailable) {
+      // No panel: the share sheet still offers "Save to Files".
+      await _handleShareSingle(context, file);
+    }
+  }
+
+  /// iOS: save panel for every image, in order. iOS only exports one document
+  /// per dialog, so this walks the list one panel at a time.
+  Future<void> _saveAllToDevice(BuildContext context) async {
+    if (imageFiles == null || imageFiles!.isEmpty) return;
+    if (imageFiles!.length == 1) {
+      await _saveImageToDevice(context, 0);
+      return;
+    }
+    final l10n = AppLocalizations.of(context)!;
+    // Multiple documents: the share sheet can save them all at once.
+    await _handleShareAll(context);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.iosSaveImagesHint),
+          duration: const Duration(seconds: 5),
+        ),
+      );
     }
   }
 
@@ -143,6 +201,7 @@ class ImageGallerySuccessScreen extends StatelessWidget {
   }
 
   void _showImagePreview(BuildContext context, int index) {
+    final l10n = AppLocalizations.of(context)!;
     final Widget imageWidget = kIsWeb
         ? Image.memory(imageBytes![index], fit: BoxFit.contain)
         : Image.file(imageFiles![index], fit: BoxFit.contain);
@@ -160,12 +219,19 @@ class ImageGallerySuccessScreen extends StatelessWidget {
                   icon: const Icon(Icons.download),
                   onPressed: () => _downloadImage(context, index),
                 )
-              else
+              else ...[
+                if (PlatformHelper.isIOS)
+                  IconButton(
+                    icon: const Icon(Icons.save_alt),
+                    tooltip: l10n.saveToFiles,
+                    onPressed: () => _saveImageToDevice(context, index),
+                  ),
                 IconButton(
                   icon: const Icon(Icons.share),
                   onPressed: () =>
                       _handleShareSingle(context, imageFiles![index]),
                 ),
+              ],
             ],
           ),
           body: Center(
@@ -256,6 +322,17 @@ class ImageGallerySuccessScreen extends StatelessWidget {
                           horizontal: 20, vertical: 12),
                     ),
                   ),
+                  if (PlatformHelper.isIOS)
+                    ElevatedButton.icon(
+                      onPressed: () => _saveAllToDevice(context),
+                      icon: const Icon(Icons.save_alt),
+                      label: Text(l10n.saveToFiles),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                      ),
+                    ),
                 ],
                 ElevatedButton.icon(
                   onPressed: onGoHome,

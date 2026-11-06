@@ -329,6 +329,8 @@
   "confirmDeleteMessage": "{name} dosyasını silmek istediğinizden emin misiniz?",
   "fileDeletedSuccess": "Dosya silindi.",
   "saveToFiles": "Dosyalar'a Kaydet",
+  "savedToFiles": "Dosyalar'a kaydedildi",
+  "iosSaveImagesHint": "İpucu: Tüm görselleri iPhone'unuzda tutmak için “Dosyalar'a Kaydet”i seçin.",
   "iosFilesHint": "Dosyalar › iPhone'um › PDF Toolkit",
   "chooseSaveLocationHint": "iPhone'da bir kopya tutmak için “Dosyalar'a Kaydet”i seçin.",
   "savedFilesLocation": "Kaydedilen dosyaların konumu",

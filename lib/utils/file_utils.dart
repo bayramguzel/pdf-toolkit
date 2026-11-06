@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart' show BuildContext, MediaQuery, Rect;
 import 'package:flutter/services.dart';
+import 'package:file_picker/file_picker.dart' as fp;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'web_download_stub.dart' if (dart.library.js_interop) 'web_download.dart'
@@ -37,6 +39,46 @@ class FileUtils {
   static Future<void> writeAndScan(File file, List<int> bytes) async {
     await file.writeAsBytes(bytes);
     await scanFileForMediaStore(file.path);
+  }
+
+  /// iOS: shows the system **Save to Files** panel so the user picks the folder
+  /// (On My iPhone, iCloud Drive, …) and can rename the file before it is kept.
+  ///
+  /// Returns the destination path, or `null` when the user cancelled. Throws
+  /// when the panel cannot be presented, so callers can fall back to the share
+  /// sheet, which also offers "Save to Files".
+  static Future<String?> saveWithSavePanel({
+    required Uint8List bytes,
+    required String fileName,
+  }) async {
+    if (kIsWeb || !Platform.isIOS) {
+      throw UnsupportedError('saveWithSavePanel is iOS only');
+    }
+    return fp.FilePicker.saveFile(
+      fileName: fileName,
+      bytes: bytes,
+      type: fp.FileType.any,
+    );
+  }
+
+  /// iOS convenience wrapper around [saveWithSavePanel] for a file that already
+  /// lives in the app sandbox.
+  static Future<String?> saveFileWithPanel(File file) async {
+    final data = await file.readAsBytes();
+    return saveWithSavePanel(bytes: data, fileName: baseName(file.path));
+  }
+
+  /// Last path component, tolerant of both separators.
+  static String baseName(String path) => path.split(RegExp(r'[/\\]')).last;
+
+  /// iPad and Mac present the share sheet as a popover that must be anchored to
+  /// a rect; without one the system throws. A point in the top trailing corner
+  /// works for every full-screen tool bar and is ignored on iPhone.
+  static Rect? shareAnchorRect(BuildContext context) {
+    if (kIsWeb || !Platform.isIOS) return null;
+    final size = MediaQuery.sizeOf(context);
+    final padding = MediaQuery.paddingOf(context);
+    return Rect.fromLTWH(size.width - 24, padding.top + 8, 1, 1);
   }
 
   /// Write string to file and trigger MediaStore scan on Android.

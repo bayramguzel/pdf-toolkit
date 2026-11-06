@@ -10,6 +10,7 @@ import 'providers/app_state.dart';
 import 'providers/settings_provider.dart';
 import 'widgets/video_splash_screen.dart';
 import 'services/ad_service.dart';
+import 'utils/ios_incoming_files.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +40,16 @@ void main() async {
       }
     } catch (_) {
       // If intent check fails, proceed normally
+    }
+  }
+
+  // iOS: documents opened via "Open in PDF Toolkit" / "Copy to PDF Toolkit"
+  // (copied into the sandbox by ios/Runner/AppDelegate.swift).
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+    try {
+      incomingFilePath = await IosIncomingFiles.takeLatestPath();
+    } catch (_) {
+      // No pending document — proceed normally.
     }
   }
 

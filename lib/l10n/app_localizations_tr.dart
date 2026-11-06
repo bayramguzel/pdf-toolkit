@@ -1047,6 +1047,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get saveToFiles => 'Dosyalar\'a Kaydet';
 
   @override
+  String get savedToFiles => 'Dosyalar\'a kaydedildi';
+
+  @override
+  String get iosSaveImagesHint =>
+      'İpucu: Tüm görselleri iPhone\'unuzda tutmak için “Dosyalar\'a Kaydet”i seçin.';
+
+  @override
   String get iosFilesHint => 'Dosyalar › iPhone\'um › PDF Toolkit';
 
   @override

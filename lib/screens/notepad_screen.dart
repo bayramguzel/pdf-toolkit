@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -8,6 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:pdf_toolkit/utils/file_utils.dart';
+import 'package:pdf_toolkit/utils/platform_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:pdf_toolkit/providers/settings_provider.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -303,8 +304,7 @@ class _NotepadScreenState extends State<NotepadScreen> {
           pw.Font pdfFont;
           switch (_selectedFontFamily) {
             case 'Arial':
-              pdfFont =
-                  _isBold ? pw.Font.helveticaBold() : pw.Font.helvetica();
+              pdfFont = _isBold ? pw.Font.helveticaBold() : pw.Font.helvetica();
               break;
             case 'Times New Roman':
               pdfFont = _isBold ? pw.Font.timesBold() : pw.Font.times();
@@ -419,11 +419,21 @@ class _NotepadScreenState extends State<NotepadScreen> {
                       ShareParams(
                         files: [XFile(file.path)],
                         text: l10n.pdfFiles,
+                        sharePositionOrigin:
+                            FileUtils.shareAnchorRect(this.context),
                       ),
                     );
                   },
                   child: const Text('Share'),
                 ),
+                if (PlatformHelper.isIOS)
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await _savePdfToDevice(file);
+                    },
+                    child: Text(l10n.saveToFiles),
+                  ),
               ],
             ),
           );
@@ -447,6 +457,34 @@ class _NotepadScreenState extends State<NotepadScreen> {
     }
   }
 
+  /// iOS: export the generated PDF through the system "Save to Files" panel.
+  Future<void> _savePdfToDevice(File file) async {
+    final l10n = AppLocalizations.of(context);
+    String? savedPath;
+    try {
+      savedPath = await FileUtils.saveFileWithPanel(file);
+    } catch (_) {
+      savedPath = null;
+      if (!mounted) return;
+      // Panel unavailable: the share sheet also offers "Save to Files".
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path)],
+          sharePositionOrigin: FileUtils.shareAnchorRect(context),
+        ),
+      );
+      return;
+    }
+    if (!mounted || savedPath == null || l10n == null) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${l10n.savedToFiles}\n${FileUtils.baseName(savedPath)}'),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
   Future<void> _openPdfPreview(String filePath) async {
     try {
       // Navigate to PDF viewer screen
@@ -462,7 +500,10 @@ class _NotepadScreenState extends State<NotepadScreen> {
                   icon: const Icon(Icons.share),
                   onPressed: () async {
                     await SharePlus.instance.share(
-                      ShareParams(files: [XFile(filePath)]),
+                      ShareParams(
+                        files: [XFile(filePath)],
+                        sharePositionOrigin: FileUtils.shareAnchorRect(context),
+                      ),
                     );
                   },
                 ),

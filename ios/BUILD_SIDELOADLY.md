@@ -118,12 +118,17 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
 | --- | --- |
 | Cihazdaki bir PDF'i açma | **Dosyalar** seçicisi açılır (iCloud Drive, iPhone'um, Google Drive vb.). |
 | Dönüştürülen dosyaları görme | **Dosyalar → iPhone'um → PDF Toolkit** klasörü. (Info.plist'te `UIFileSharingEnabled` açıktır.) |
-| Dosyayı cihaza kaydetme | Sonuç ekranında **Dosyalar'a Kaydet** → paylaşım sayfasından hedef klasörü seçin. |
+| Dosyayı kendi seçtiğiniz klasöre kaydetme | Sonuç ekranında **Dosyalar'a Kaydet** → iOS'un yerleşik **Save to Files** paneli açılır; klasör seçip dosya adını değiştirebilirsiniz (iCloud Drive, iPhone'um, Google Drive…). |
+| Başka uygulamadan PDF Toolkit'e dosya aktarma | Dosyalar/Mail/WhatsApp içinde **Paylaş → PDF Toolkit** veya **Aç → PDF Toolkit**. Dosya uygulamanın klasörüne kopyalanır ve okuyucuda açılır. |
 | Görsel ekleme (PDF'e) | **Fotoğraf Kitaplığı** veya **Dosyalar** seçilebilir. |
-| Oluşturulan görselleri görme | Yine **Dosyalar → iPhone'um → PDF Toolkit**. |
+| Oluşturulan görselleri görme / kaydetme | Yine **Dosyalar → iPhone'um → PDF Toolkit**; ayrıca galeri ekranındaki **Dosyalar'a Kaydet** ile istediğiniz klasöre kopya çıkarabilirsiniz. |
+| Paylaşım (iPad) | Paylaşım sayfası, ekranın sağ üst köşesine çapalanır (iPad'de zorunlu). |
 
 > Telefonda dosyaları görmek için Dosyalar uygulamasında **Gözat → iPhone'um**
 > altına bakın. Uygulama adı "PDF Toolkit" olarak listelenir.
+
+> İlk kullanımda **Dosyalar → iPhone'um → PDF Toolkit** klasörü boş olabilir;
+> uygulama ilk dosyayı oluşturduğunda klasör otomatik görünür.
 
 ---
 

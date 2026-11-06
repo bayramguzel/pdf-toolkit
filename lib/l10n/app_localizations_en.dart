@@ -1045,6 +1045,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveToFiles => 'Save to Files';
 
   @override
+  String get savedToFiles => 'Saved to Files';
+
+  @override
+  String get iosSaveImagesHint =>
+      'Tip: choose “Save to Files” to keep every image on your iPhone.';
+
+  @override
   String get iosFilesHint => 'Files app › On My iPhone › PDF Toolkit';
 
   @override

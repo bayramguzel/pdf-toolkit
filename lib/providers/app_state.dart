@@ -37,6 +37,10 @@ class AppState extends ChangeNotifier {
   void handleIncomingFile(String path) {
     if (path.toLowerCase().endsWith('.pdf')) {
       selectTool(ToolType.reader, file: File(path));
+    } else if (File(path).existsSync()) {
+      // Non-PDF imports (images, Word, text) are copied into the app folder;
+      // show the user where they landed.
+      selectTool(ToolType.folderBrowser);
     }
   }
 

@@ -152,6 +152,30 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
     await SharePlus.instance.share(
       ShareParams(
         files: [XFile(file.path)],
+        sharePositionOrigin: FileUtils.shareAnchorRect(context),
+      ),
+    );
+  }
+
+  /// iOS: keeps a copy outside the app sandbox using the native
+  /// "Save to Files" panel (On My iPhone / iCloud Drive / …).
+  Future<void> _saveFileToDevice(File file) async {
+    final l10n = AppLocalizations.of(context)!;
+    String? savedPath;
+    try {
+      savedPath = await FileUtils.saveFileWithPanel(file);
+    } catch (_) {
+      savedPath = null;
+      // Panel not available — the share sheet still offers "Save to Files".
+      await _shareFile(file);
+      return;
+    }
+    if (!mounted || savedPath == null) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${l10n.savedToFiles}\n${FileUtils.baseName(savedPath)}'),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 4),
       ),
     );
   }
@@ -342,6 +366,7 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
                               onSelected: (value) {
                                 if (value == 'open') _openFile(file);
                                 if (value == 'share') _shareFile(file);
+                                if (value == 'save') _saveFileToDevice(file);
                                 if (value == 'delete') _deleteFile(file);
                               },
                               itemBuilder: (ctx) => [
@@ -365,6 +390,17 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
                                     ],
                                   ),
                                 ),
+                                if (PlatformHelper.isIOS)
+                                  PopupMenuItem(
+                                    value: 'save',
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.save_alt, size: 18),
+                                        const SizedBox(width: 8),
+                                        Text(l10n.saveToFiles),
+                                      ],
+                                    ),
+                                  ),
                                 PopupMenuItem(
                                   value: 'delete',
                                   child: Row(

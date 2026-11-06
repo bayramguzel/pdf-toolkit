@@ -90,21 +90,40 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
             throw Exception('Could not save to Downloads');
           }
         } else if (Platform.isIOS) {
-          // iOS sandbox: hand the file to the share sheet so the user can
-          // choose "Save to Files" (or any other destination).
-          await SharePlus.instance.share(
-            ShareParams(
-              files: [XFile(_pdfFile!.path)],
-              text: _pdfFileName ?? 'document.pdf',
-            ),
-          );
-          if (mounted) {
+          // iOS has no public Downloads folder. Use the system "Save to Files"
+          // panel so the user picks the destination; fall back to the share
+          // sheet when the panel cannot be presented.
+          String? savedPath;
+          bool panelUnavailable = false;
+          try {
+            savedPath = await FileUtils.saveWithSavePanel(
+                bytes: bytes, fileName: _pdfFileName ?? 'document.pdf');
+          } catch (e) {
+            debugPrint('Save to Files panel failed: $e');
+            panelUnavailable = true;
+          }
+          if (!mounted) return;
+          if (savedPath != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(l10n.chooseSaveLocationHint),
+                content: Text(
+                    '${l10n.savedToFiles}\n${FileUtils.baseName(savedPath)}'),
+                backgroundColor: Colors.green,
                 duration: const Duration(seconds: 4),
               ),
             );
+            return;
+          }
+          if (panelUnavailable) {
+            await _sharePdf();
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.chooseSaveLocationHint),
+                  duration: const Duration(seconds: 4),
+                ),
+              );
+            }
           }
           return;
         } else {
@@ -162,6 +181,7 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
             files: [XFile(_pdfFile!.path)],
             text: shareMsg,
             subject: l10n.shareFile,
+            sharePositionOrigin: FileUtils.shareAnchorRect(context),
           ),
         );
       }
@@ -303,15 +323,11 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                 ),
                 IconButton(
                   icon: Icon(
-                      PlatformHelper.isIOS
-                          ? Icons.ios_share
-                          : Icons.download,
+                      PlatformHelper.isIOS ? Icons.save_alt : Icons.download,
                       size: 20,
                       color: Colors.white),
                   onPressed: _downloadPdf,
-                  tooltip: PlatformHelper.isIOS
-                      ? l10n.saveToFiles
-                      : 'Download',
+                  tooltip: PlatformHelper.isIOS ? l10n.saveToFiles : 'Download',
                   padding: EdgeInsets.zero,
                   constraints:
                       const BoxConstraints(minWidth: 36, minHeight: 36),

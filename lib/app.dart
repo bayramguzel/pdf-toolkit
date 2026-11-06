@@ -11,6 +11,8 @@ import 'providers/app_state.dart';
 import 'providers/settings_provider.dart';
 import 'services/ad_service.dart';
 import 'utils/platform_helper.dart';
+import 'utils/file_utils.dart';
+import 'utils/ios_incoming_files.dart';
 import 'widgets/settings_drawer.dart';
 import 'screens/home_screen.dart';
 import 'screens/pdf_reader_screen.dart';
@@ -45,6 +47,7 @@ class PdfToolkitApp extends StatefulWidget {
 
 class _PdfToolkitAppState extends State<PdfToolkitApp> {
   late StreamSubscription _intentDataStreamSubscription;
+  AppLifecycleListener? _iosLifecycleListener;
 
   @override
   void initState() {
@@ -58,6 +61,15 @@ class _PdfToolkitAppState extends State<PdfToolkitApp> {
               .handleIncomingFile(widget.incomingFilePath!);
         }
       });
+    }
+
+    // iOS: "Open in PDF Toolkit" while the app is already running.
+    if (!kIsWeb && PlatformHelper.isIOS) {
+      _iosLifecycleListener =
+          AppLifecycleListener(onResume: _openPendingIosDocument);
+      // Cold start via "Open in": the native side copies the document while
+      // Dart is booting, so look once more shortly after the first frame.
+      unawaited(_openPendingIosDocument());
     }
 
     // Skip mobile-specific features on web
@@ -96,7 +108,17 @@ class _PdfToolkitAppState extends State<PdfToolkitApp> {
     if (!kIsWeb && PlatformHelper.isAndroid) {
       _intentDataStreamSubscription.cancel();
     }
+    _iosLifecycleListener?.dispose();
     super.dispose();
+  }
+
+  /// Drains documents handed over by iOS (Files/Mail/WhatsApp > Open in).
+  Future<void> _openPendingIosDocument() async {
+    // Give the native side a moment to copy the document on cold resumes.
+    await Future<void>.delayed(const Duration(milliseconds: 350));
+    final path = await IosIncomingFiles.takeLatestPath();
+    if (path == null || !mounted) return;
+    Provider.of<AppState>(context, listen: false).handleIncomingFile(path);
   }
 
   ThemeData _buildTheme(Color primaryColor, Brightness brightness) {
@@ -149,6 +171,8 @@ class _PdfToolkitAppState extends State<PdfToolkitApp> {
           ),
         ),
       ),
+      // Flutter's default page transitions already use the native Cupertino
+      // slide transition on iOS, so no platform override is needed here.
     );
   }
 
@@ -332,6 +356,7 @@ class _MainScreenState extends State<MainScreen> {
                     SharePlus.instance.share(
                       ShareParams(
                         text: shareText,
+                        sharePositionOrigin: FileUtils.shareAnchorRect(context),
                       ),
                     );
                   },

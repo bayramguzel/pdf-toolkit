@@ -1984,11 +1984,23 @@ abstract class AppLocalizations {
   /// **'File deleted.'**
   String get fileDeletedSuccess;
 
-  /// iOS: open the share sheet so the user can save a copy anywhere
+  /// iOS: export a copy through the system Save to Files panel
   ///
   /// In en, this message translates to:
   /// **'Save to Files'**
   String get saveToFiles;
+
+  /// iOS: confirmation after the Save to Files panel finished
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to Files'**
+  String get savedToFiles;
+
+  /// iOS: hint after sharing several images
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: choose “Save to Files” to keep every image on your iPhone.'**
+  String get iosSaveImagesHint;
 
   /// iOS: where app documents are visible
   ///

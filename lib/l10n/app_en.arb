@@ -1371,7 +1371,15 @@
   },
   "saveToFiles": "Save to Files",
   "@saveToFiles": {
-    "description": "iOS: open the share sheet so the user can save a copy anywhere"
+    "description": "iOS: export a copy through the system Save to Files panel"
+  },
+  "savedToFiles": "Saved to Files",
+  "@savedToFiles": {
+    "description": "iOS: confirmation after the Save to Files panel finished"
+  },
+  "iosSaveImagesHint": "Tip: choose “Save to Files” to keep every image on your iPhone.",
+  "@iosSaveImagesHint": {
+    "description": "iOS: hint after sharing several images"
   },
   "iosFilesHint": "Files app › On My iPhone › PDF Toolkit",
   "@iosFilesHint": {

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -45,6 +45,7 @@ class OperationSuccessScreen extends StatelessWidget {
           ShareParams(
             files: [XFile(file!.path)],
             text: 'Check out this file: $_displayName',
+            sharePositionOrigin: FileUtils.shareAnchorRect(context),
           ),
         );
       }
@@ -60,6 +61,52 @@ class OperationSuccessScreen extends StatelessWidget {
     }
   }
 
+  /// iOS: native "Save to Files" panel. Falls back to the share sheet when the
+  /// panel cannot be presented. Returns true when the save panel did the work.
+  Future<bool> _handleSaveToFiles(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    Uint8List? data = bytes;
+    if (data == null && file != null) {
+      try {
+        data = await file!.readAsBytes();
+      } catch (_) {
+        data = null;
+      }
+    }
+
+    String? savedPath;
+    var panelUnavailable = data == null;
+    if (data != null) {
+      try {
+        savedPath = await FileUtils.saveWithSavePanel(
+            bytes: data, fileName: _displayName);
+      } catch (e) {
+        debugPrint('Save to Files panel failed: $e');
+        panelUnavailable = true;
+      }
+    }
+
+    if (!context.mounted) return !panelUnavailable;
+    if (savedPath != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('${l10n.savedToFiles}\n${FileUtils.baseName(savedPath)}'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return true;
+    }
+    if (panelUnavailable) {
+      // No panel: the share sheet still offers "Save to Files".
+      await _handleShare(context);
+      return false;
+    }
+    // The user dismissed the panel — nothing to do.
+    return true;
+  }
+
   Future<void> _handleDownload(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     if (kIsWeb) {
@@ -73,10 +120,8 @@ class OperationSuccessScreen extends StatelessWidget {
         );
       }
     } else if (PlatformHelper.isIOS) {
-      // iOS has no writable "Downloads" folder. The share sheet is the system
-      // way to store a copy anywhere (Files, iCloud Drive, another app).
-      await _handleShare(context);
-      if (context.mounted) {
+      final saved = await _handleSaveToFiles(context);
+      if (!saved && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.chooseSaveLocationHint),
@@ -235,7 +280,7 @@ class OperationSuccessScreen extends StatelessWidget {
                   icon: Icon(kIsWeb
                       ? Icons.download
                       : PlatformHelper.isIOS
-                          ? Icons.ios_share
+                          ? Icons.save_alt
                           : Icons.save),
                   label: Text(kIsWeb
                       ? 'Download'
