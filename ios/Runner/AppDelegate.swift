@@ -20,7 +20,7 @@ import UIKit
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
   ) -> Bool {
-    if url.isFileURL && IncomingFileStore.shared.importDocument(at: url) {
+    if url.isFileURL && IncomingFileStore.importDocument(at: url) {
       return true
     }
     return super.application(app, open: url, options: options)
@@ -29,12 +29,10 @@ import UIKit
 
 /// Copies documents opened from other apps into the app sandbox and writes a
 /// small JSON queue in Application Support that the Dart side drains.
-final class IncomingFileStore {
-  static let shared = IncomingFileStore()
+enum IncomingFileStore {
+  private static let queueFileName = "incoming_documents.json"
 
-  private let queueFileName = "incoming_documents.json"
-
-  private var queueURL: URL? {
+  private static var queueURL: URL? {
     let manager = FileManager.default
     guard
       let support = manager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
@@ -46,7 +44,7 @@ final class IncomingFileStore {
   }
 
   @discardableResult
-  func importDocument(at url: URL) -> Bool {
+  static func importDocument(at url: URL) -> Bool {
     let manager = FileManager.default
     guard
       let documents = manager.urls(for: .documentDirectory, in: .userDomainMask).first
@@ -71,7 +69,7 @@ final class IncomingFileStore {
     return true
   }
 
-  private func uniqueDestination(for url: URL, in directory: URL) -> URL {
+  private static func uniqueDestination(for url: URL, in directory: URL) -> URL {
     let manager = FileManager.default
     let name = url.deletingPathExtension().lastPathComponent
     let ext = url.pathExtension
@@ -85,7 +83,7 @@ final class IncomingFileStore {
     return candidate
   }
 
-  private func enqueue(path: String) {
+  private static func enqueue(path: String) {
     guard let queueURL = queueURL else { return }
     var entries: [[String: Any]] = []
     if let data = try? Data(contentsOf: queueURL),
