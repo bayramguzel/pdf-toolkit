@@ -11,10 +11,14 @@ import 'providers/settings_provider.dart';
 import 'widgets/video_splash_screen.dart';
 import 'services/ad_service.dart';
 import 'utils/ios_incoming_files.dart';
+import 'utils/platform_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AdService().initialize();
+  // The iOS build ships without any ads (Unity Ads / AdMob).
+  if (!kIsWeb && !PlatformHelper.isIOS) {
+    await AdService().initialize();
+  }
 
   // Set system UI overlay style only on mobile
   if (!kIsWeb) {

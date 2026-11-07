@@ -238,9 +238,14 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _checkVipStatus();
-    _vipTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => _checkVipStatus());
+    // iOS has no ads at all, so the VIP/reward timer is not needed there.
+    if (PlatformHelper.isIOS) {
+      _isVipActive = true;
+    } else {
+      _checkVipStatus();
+      _vipTimer =
+          Timer.periodic(const Duration(seconds: 1), (_) => _checkVipStatus());
+    }
   }
 
   Future<void> _checkVipStatus() async {
@@ -302,48 +307,51 @@ class _MainScreenState extends State<MainScreen> {
                 child: const Text('PDF Toolkit'),
               ),
               actions: [
-                // Gold Star Icon for Rewarded Ad + Red indicator badge when expired
-                IconButton(
-                  icon: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      const Icon(
-                        Icons.star_rounded,
-                        color: Colors.amber,
-                        size: 28,
-                      ),
-                      if (!_isVipActive)
-                        Positioned(
-                          right: -2,
-                          top: -2,
-                          child: Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              color: Colors.redAccent,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Theme.of(context)
-                                        .appBarTheme
-                                        .backgroundColor ??
-                                    Theme.of(context).primaryColor,
-                                width: 1.5,
-                              ),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.redAccent,
-                                  blurRadius: 4,
-                                  spreadRadius: 1,
+                // Gold Star Icon for Rewarded Ad + Red indicator badge when
+                // expired. Ads (and therefore the reward star) do not exist
+                // in the iOS build.
+                if (!PlatformHelper.isIOS)
+                  IconButton(
+                    icon: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        const Icon(
+                          Icons.star_rounded,
+                          color: Colors.amber,
+                          size: 28,
+                        ),
+                        if (!_isVipActive)
+                          Positioned(
+                            right: -2,
+                            top: -2,
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Theme.of(context)
+                                          .appBarTheme
+                                          .backgroundColor ??
+                                      Theme.of(context).primaryColor,
+                                  width: 1.5,
                                 ),
-                              ],
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.redAccent,
+                                    blurRadius: 4,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
+                    tooltip: '24h Free Usage (Rewarded Ad)',
+                    onPressed: _handleRewardClick,
                   ),
-                  tooltip: '24h Free Usage (Rewarded Ad)',
-                  onPressed: _handleRewardClick,
-                ),
                 // Share App link
                 IconButton(
                   icon: const Icon(Icons.share_rounded),
@@ -413,10 +421,11 @@ class _MainScreenState extends State<MainScreen> {
                   children: [
                     Expanded(child: _buildCurrentScreen(appState)),
                     if (appState.activeTool != ToolType.home) ...[
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4.0),
-                        child: LevelPlayBannerWidget(height: 50),
-                      ),
+                      if (!PlatformHelper.isIOS)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 4.0),
+                          child: LevelPlayBannerWidget(height: 50),
+                        ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 6.0),

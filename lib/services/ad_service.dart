@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 
+import '../utils/platform_helper.dart';
+
 class AdService {
   static final AdService instance = AdService._internal();
   factory AdService() => instance;
@@ -21,12 +23,16 @@ class AdService {
 
   static const String _vipExpiryKey = 'vip_expires_at_ms';
 
+  /// Ads (Unity Ads / AdMob) are used on Android and the web build only.
+  /// The iOS build ships without any ad placements or ad UI.
+  static bool get isSupported => !kIsWeb && !PlatformHelper.isIOS;
+
   bool get isInitialized => _initialized;
 
   Future<void> initialize() => init();
 
   Future<void> init() async {
-    if (kIsWeb || _initialized) return;
+    if (!isSupported || _initialized) return;
 
     try {
       final gameId = defaultTargetPlatform == TargetPlatform.iOS
@@ -52,20 +58,22 @@ class AdService {
   }
 
   void _loadAds() {
-    if (kIsWeb) return;
+    if (!isSupported) return;
     try {
       UnityAds.load(
         placementId: interstitialPlacementId,
-        onComplete: (placementId) => debugPrint('Loaded interstitial: $placementId'),
-        onFailed: (placementId, error, message) =>
-            debugPrint('Failed to load interstitial $placementId: $error - $message'),
+        onComplete: (placementId) =>
+            debugPrint('Loaded interstitial: $placementId'),
+        onFailed: (placementId, error, message) => debugPrint(
+            'Failed to load interstitial $placementId: $error - $message'),
       );
 
       UnityAds.load(
         placementId: rewardedPlacementId,
-        onComplete: (placementId) => debugPrint('Loaded rewarded: $placementId'),
-        onFailed: (placementId, error, message) =>
-            debugPrint('Failed to load rewarded $placementId: $error - $message'),
+        onComplete: (placementId) =>
+            debugPrint('Loaded rewarded: $placementId'),
+        onFailed: (placementId, error, message) => debugPrint(
+            'Failed to load rewarded $placementId: $error - $message'),
       );
     } catch (e) {
       debugPrint('AdService load error: $e');
@@ -77,8 +85,7 @@ class AdService {
     required VoidCallback onReward,
     VoidCallback? onAdNotReady,
   }) async {
-    if (kIsWeb) {
-      await addVip24Hours();
+    if (!isSupported) {
       onReward();
       return;
     }
@@ -113,7 +120,7 @@ class AdService {
 
   /// Shows interstitial ad if ready.
   void showInterstitialAd({VoidCallback? onAdClosed}) {
-    if (kIsWeb || !_initialized) {
+    if (!isSupported || !_initialized) {
       onAdClosed?.call();
       return;
     }
@@ -173,6 +180,7 @@ class AdService {
     }
 
     await prefs.setInt(_vipExpiryKey, newExpiryMs);
-    debugPrint("VIP status updated until: ${DateTime.fromMillisecondsSinceEpoch(newExpiryMs)}");
+    debugPrint(
+        "VIP status updated until: ${DateTime.fromMillisecondsSinceEpoch(newExpiryMs)}");
   }
 }

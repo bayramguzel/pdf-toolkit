@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import '../services/ad_service.dart';
+import '../utils/platform_helper.dart';
 
 class LevelPlayBannerWidget extends StatelessWidget {
   final BannerSize size;
@@ -15,7 +16,7 @@ class LevelPlayBannerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
+    if (kIsWeb || PlatformHelper.isIOS) {
       return const SizedBox.shrink();
     }
 
@@ -26,8 +27,10 @@ class LevelPlayBannerWidget extends StatelessWidget {
       child: UnityBannerAd(
         placementId: AdService.bannerPlacementId,
         size: size,
-        onLoad: (placementId) => debugPrint('Unity Banner loaded: $placementId'),
-        onClick: (placementId) => debugPrint('Unity Banner clicked: $placementId'),
+        onLoad: (placementId) =>
+            debugPrint('Unity Banner loaded: $placementId'),
+        onClick: (placementId) =>
+            debugPrint('Unity Banner clicked: $placementId'),
         onFailed: (placementId, error, message) =>
             debugPrint('Unity Banner failed: $placementId $error $message'),
       ),

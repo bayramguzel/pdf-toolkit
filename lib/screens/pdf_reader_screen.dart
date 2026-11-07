@@ -32,12 +32,26 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
   String? _error;
   double _zoomLevel = 1.0;
   bool _isSearchVisible = false;
+  int _currentPage = 1;
+  int _totalPages = 0;
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     if (!kIsWeb && widget.initialFile != null) {
+      _loadPdf(widget.initialFile!);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant PdfReaderScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Opening another document (e.g. "Open in PDF Toolkit" while the reader
+    // is already on screen) must reload the viewer.
+    if (!kIsWeb &&
+        widget.initialFile != null &&
+        widget.initialFile!.path != oldWidget.initialFile?.path) {
       _loadPdf(widget.initialFile!);
     }
   }
@@ -50,12 +64,35 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
   }
 
   void _loadPdf(File file) {
+    if (!file.existsSync()) {
+      setState(() {
+        _isLoading = false;
+        _documentLoaded = false;
+        _pdfFile = null;
+        _pdfBytes = null;
+        _pdfFileName = null;
+        _error = null;
+      });
+      // Show the picker screen again instead of a dead-end error.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.errorOpeningFile),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      });
+      return;
+    }
     setState(() {
       _isLoading = true;
       _documentLoaded = false;
       _error = null;
       _pdfFile = file;
       _pdfFileName = file.path.split(RegExp(r'[\\/]')).last;
+      _currentPage = 1;
+      _totalPages = 0;
     });
   }
 
@@ -66,6 +103,23 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
       _error = null;
       _pdfBytes = bytes;
       _pdfFileName = name;
+      _currentPage = 1;
+      _totalPages = 0;
+    });
+  }
+
+  void _resetFile() {
+    setState(() {
+      _pdfFile = null;
+      _pdfBytes = null;
+      _pdfFileName = null;
+      _documentLoaded = false;
+      _isLoading = false;
+      _error = null;
+      _currentPage = 1;
+      _totalPages = 0;
+      _isSearchVisible = false;
+      _searchController.clear();
     });
   }
 
@@ -214,15 +268,25 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
     if (_error != null) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.red.withAlpha(50),
-              border: Border.all(color: Colors.red),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(_error!, style: const TextStyle(color: Colors.red)),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline_rounded,
+                  size: 48, color: Colors.redAccent),
+              const SizedBox(height: 12),
+              Text(
+                _error!,
+                style: const TextStyle(color: Colors.redAccent),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _resetFile,
+                icon: const Icon(Icons.folder_open_rounded),
+                label: Text(l10n.selectFile),
+              ),
+            ],
           ),
         ),
       );
@@ -258,12 +322,61 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
       children: [
         // Toolbar
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          color: Colors.grey[900],
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          color: PlatformHelper.isIOS
+              ? Theme.of(context).colorScheme.primary
+              : Colors.grey[900],
           child: IconTheme(
             data: const IconThemeData(color: Colors.white),
             child: Row(
               children: [
+                // On iOS the viewer is pinch-to-zoom, so the explicit zoom
+                // controls are omitted to keep the toolbar uncluttered.
+                if (!PlatformHelper.isIOS) ...[
+                  IconButton(
+                    icon: const Icon(Icons.zoom_out,
+                        size: 20, color: Colors.white),
+                    onPressed: _documentLoaded
+                        ? () {
+                            setState(() {
+                              _zoomLevel = (_zoomLevel - 0.25).clamp(0.5, 5.0);
+                              _pdfViewerController.zoomLevel = _zoomLevel;
+                            });
+                          }
+                        : null,
+                    tooltip: 'Zoom Out',
+                    padding: EdgeInsets.zero,
+                    constraints:
+                        const BoxConstraints(minWidth: 36, minHeight: 36),
+                  ),
+                  Text('${(_zoomLevel * 100).round()}%',
+                      style:
+                          const TextStyle(fontSize: 12, color: Colors.white)),
+                  IconButton(
+                    icon: const Icon(Icons.zoom_in,
+                        size: 20, color: Colors.white),
+                    onPressed: _documentLoaded
+                        ? () {
+                            setState(() {
+                              _zoomLevel = (_zoomLevel + 0.25).clamp(0.5, 5.0);
+                              _pdfViewerController.zoomLevel = _zoomLevel;
+                            });
+                          }
+                        : null,
+                    tooltip: 'Zoom In',
+                    padding: EdgeInsets.zero,
+                    constraints:
+                        const BoxConstraints(minWidth: 36, minHeight: 36),
+                  ),
+                ],
+                if (_documentLoaded && _totalPages > 0)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Text(
+                      '$_currentPage / $_totalPages',
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
+                    ),
+                  ),
                 Expanded(
                   child: Text(
                     _pdfFileName ?? 'PDF',
@@ -274,40 +387,6 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                IconButton(
-                  icon:
-                      const Icon(Icons.zoom_out, size: 20, color: Colors.white),
-                  onPressed: _documentLoaded
-                      ? () {
-                          setState(() {
-                            _zoomLevel = (_zoomLevel - 0.25).clamp(0.5, 5.0);
-                            _pdfViewerController.zoomLevel = _zoomLevel;
-                          });
-                        }
-                      : null,
-                  tooltip: 'Zoom Out',
-                  padding: EdgeInsets.zero,
-                  constraints:
-                      const BoxConstraints(minWidth: 36, minHeight: 36),
-                ),
-                Text('${(_zoomLevel * 100).round()}%',
-                    style: const TextStyle(fontSize: 12, color: Colors.white)),
-                IconButton(
-                  icon:
-                      const Icon(Icons.zoom_in, size: 20, color: Colors.white),
-                  onPressed: _documentLoaded
-                      ? () {
-                          setState(() {
-                            _zoomLevel = (_zoomLevel + 0.25).clamp(0.5, 5.0);
-                            _pdfViewerController.zoomLevel = _zoomLevel;
-                          });
-                        }
-                      : null,
-                  tooltip: 'Zoom In',
-                  padding: EdgeInsets.zero,
-                  constraints:
-                      const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
                 IconButton(
                   icon: Icon(_isSearchVisible ? Icons.search_off : Icons.search,
@@ -343,13 +422,7 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                 IconButton(
                   icon: const Icon(Icons.folder_open,
                       size: 20, color: Colors.white),
-                  onPressed: () => setState(() {
-                    _pdfFile = null;
-                    _pdfBytes = null;
-                    _pdfFileName = null;
-                    _documentLoaded = false;
-                    _isLoading = false;
-                  }),
+                  onPressed: _resetFile,
                   tooltip: 'Open another file',
                   padding: EdgeInsets.zero,
                   constraints:
@@ -406,13 +479,21 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                       setState(() {
                         _isLoading = false;
                         _documentLoaded = true;
+                        _totalPages = details.document.pages.count;
+                        _currentPage = 1;
                       });
+                    }
+                  },
+                  onPageChanged: (details) {
+                    if (mounted && details.newPageNumber != _currentPage) {
+                      setState(() => _currentPage = details.newPageNumber);
                     }
                   },
                   onDocumentLoadFailed: (details) {
                     if (mounted) {
                       setState(() {
                         _isLoading = false;
+                        _documentLoaded = false;
                         _error = l10n.errorLoadingPdf(details.error);
                       });
                     }
@@ -432,13 +513,21 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                       setState(() {
                         _isLoading = false;
                         _documentLoaded = true;
+                        _totalPages = details.document.pages.count;
+                        _currentPage = 1;
                       });
+                    }
+                  },
+                  onPageChanged: (details) {
+                    if (mounted && details.newPageNumber != _currentPage) {
+                      setState(() => _currentPage = details.newPageNumber);
                     }
                   },
                   onDocumentLoadFailed: (details) {
                     if (mounted) {
                       setState(() {
                         _isLoading = false;
+                        _documentLoaded = false;
                         _error = l10n.errorLoadingPdf(details.error);
                       });
                     }

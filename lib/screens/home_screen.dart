@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../providers/app_state.dart';
 import '../widgets/tool_card.dart';
 import '../widgets/levelplay_banner_widget.dart';
+import '../utils/platform_helper.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -284,31 +285,37 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  // Banner Card under Open Folder
-                  if (!kIsWeb) ...[
+                  // Banner Card under Open Folder (Android/web only — the iOS
+                  // build has no ads and therefore no banner container).
+                  if (!kIsWeb && !PlatformHelper.isIOS) ...[
                     const SizedBox(height: 12),
                     Container(
                       width: double.infinity,
                       constraints: const BoxConstraints(maxWidth: 500),
                       height: 60,
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            const Color(0xFF6366F1).withAlpha((0.15 * 255).round()),
-                            const Color(0xFFA855F7).withAlpha((0.15 * 255).round()),
+                            const Color(0xFF6366F1)
+                                .withAlpha((0.15 * 255).round()),
+                            const Color(0xFFA855F7)
+                                .withAlpha((0.15 * 255).round()),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(0xFF6366F1).withAlpha((0.3 * 255).round()),
+                          color: const Color(0xFF6366F1)
+                              .withAlpha((0.3 * 255).round()),
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF6366F1).withAlpha((0.15 * 255).round()),
+                            color: const Color(0xFF6366F1)
+                                .withAlpha((0.15 * 255).round()),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -510,7 +517,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ),
-        if (!kIsWeb)
+        if (!kIsWeb && !PlatformHelper.isIOS)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 4.0),
             child: LevelPlayBannerWidget(height: 50),

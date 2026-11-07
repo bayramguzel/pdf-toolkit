@@ -132,6 +132,19 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
 
 ---
 
+## 6b. iOS'ta reklamlar ve PDF okuyucu
+
+- iOS yapısında **Unity Ads/AdMob hiç başlatılmaz**. Reklam banner'ları,
+  ödüllü reklam yıldızı, VIP geri sayımı ve reklam kartları gösterilmez.
+  Android sürümünde reklamlar aynen çalışmaya devam eder.
+- PDF okuyucu standart görünümdedir: üst çubukta dosya adı, sayfa numarası
+  (`3 / 12`), arama, **Dosyalar'a Kaydet**, paylaş ve başka dosya açma
+  düğmeleri bulunur. Yakınlaştırma iki parmakla yapılır.
+- Dosyalar, Mail veya WhatsApp'tan **Aç → PDF Toolkit** ile gelen belge,
+  uygulama zaten açık olsa bile okuyucuda anında yüklenir.
+
+---
+
 ## 7. Alternatif: Mac ile Derleme
 
 Bir Mac'e erişiminiz varsa:
