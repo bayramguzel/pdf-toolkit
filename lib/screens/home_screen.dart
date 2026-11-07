@@ -18,6 +18,16 @@ class HomeScreen extends StatelessWidget {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
 
+    // iOS uses a native-looking, grouped list instead of the gradient
+    // banner/card layout. Android and web are unchanged.
+    if (PlatformHelper.isIOS) {
+      return _IosHomeLayout(
+        appState: appState,
+        l10n: l10n,
+        bottomPadding: bottomPadding,
+      );
+    }
+
     // Web: compact sizes, mobile: original sizes
     final double titleSize = kIsWeb
         ? (screenWidth * 0.04).clamp(18.0, 28.0)
@@ -523,6 +533,279 @@ class HomeScreen extends StatelessWidget {
             child: LevelPlayBannerWidget(height: 50),
           ),
       ],
+    );
+  }
+}
+
+class _IosToolEntry {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Color color;
+  final ToolType tool;
+
+  const _IosToolEntry({
+    required this.icon,
+    required this.title,
+    required this.tool,
+    required this.color,
+    this.subtitle,
+  });
+}
+
+/// Native-looking, grouped list used on iOS instead of the gradient hero
+/// banner and pastel card grid. No ad containers are present here.
+class _IosHomeLayout extends StatelessWidget {
+  final AppState appState;
+  final AppLocalizations l10n;
+  final double bottomPadding;
+
+  const _IosHomeLayout({
+    required this.appState,
+    required this.l10n,
+    required this.bottomPadding,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tools = <_IosToolEntry>[
+      _IosToolEntry(
+        icon: Icons.merge,
+        title: l10n.mergePdf,
+        subtitle: l10n.combineFiles,
+        color: const Color(0xFF3B82F6),
+        tool: ToolType.merger,
+      ),
+      _IosToolEntry(
+        icon: Icons.call_split,
+        title: l10n.splitPdf,
+        subtitle: l10n.extractPages,
+        color: const Color(0xFF10B981),
+        tool: ToolType.splitter,
+      ),
+      _IosToolEntry(
+        icon: Icons.compress,
+        title: l10n.compressPdf,
+        subtitle: l10n.reduceSize,
+        color: const Color(0xFFF59E0B),
+        tool: ToolType.compressor,
+      ),
+      _IosToolEntry(
+        icon: Icons.rotate_right,
+        title: l10n.rotatePdf,
+        subtitle: l10n.turnPages,
+        color: const Color(0xFFF97316),
+        tool: ToolType.rotate,
+      ),
+      _IosToolEntry(
+        icon: Icons.delete_sweep,
+        title: l10n.removePdf,
+        subtitle: l10n.deletePages,
+        color: const Color(0xFFEF4444),
+        tool: ToolType.removePages,
+      ),
+      _IosToolEntry(
+        icon: Icons.reorder,
+        title: l10n.reorderPdf,
+        subtitle: l10n.arrangePages,
+        color: const Color(0xFF6366F1),
+        tool: ToolType.reorder,
+      ),
+      _IosToolEntry(
+        icon: Icons.water_drop,
+        title: l10n.watermarkPdf,
+        subtitle: l10n.addTextImage,
+        color: const Color(0xFF0EA5E9),
+        tool: ToolType.watermark,
+      ),
+      _IosToolEntry(
+        icon: Icons.lock,
+        title: l10n.encryptPdf,
+        subtitle: l10n.addPassword,
+        color: const Color(0xFFEC4899),
+        tool: ToolType.encryptor,
+      ),
+      _IosToolEntry(
+        icon: Icons.lock_open,
+        title: l10n.unlock,
+        subtitle: l10n.removePass,
+        color: const Color(0xFF8B5CF6),
+        tool: ToolType.unlocker,
+      ),
+      _IosToolEntry(
+        icon: Icons.image,
+        title: l10n.pdfToImage,
+        subtitle: l10n.pngJpeg,
+        color: const Color(0xFFDB2777),
+        tool: ToolType.pdfToImage,
+      ),
+      _IosToolEntry(
+        icon: Icons.article,
+        title: l10n.pdfToText,
+        subtitle: l10n.toRtfTxt,
+        color: const Color(0xFF7C3AED),
+        tool: ToolType.pdfToWord,
+      ),
+      _IosToolEntry(
+        icon: Icons.add_photo_alternate,
+        title: l10n.imageToPdf,
+        subtitle: l10n.convertImages,
+        color: const Color(0xFF6366F1),
+        tool: ToolType.imageToPdf,
+      ),
+      _IosToolEntry(
+        icon: Icons.text_snippet,
+        title: l10n.textToPdf,
+        subtitle: l10n.convertTxt,
+        color: const Color(0xFF14B8A6),
+        tool: ToolType.wordToPdf,
+      ),
+      _IosToolEntry(
+        icon: Icons.note_alt,
+        title: l10n.notepad,
+        subtitle: l10n.notepadDescription,
+        color: const Color(0xFFD97706),
+        tool: ToolType.notepad,
+      ),
+    ];
+
+    return ListView(
+      padding: EdgeInsets.fromLTRB(16, 12, 16, bottomPadding + 24),
+      children: [
+        // Primary actions, like the first group in a native iOS app.
+        _IosGroup(
+          children: [
+            _IosRow(
+              icon: Icons.menu_book,
+              title: l10n.readPdf,
+              subtitle: l10n.viewSearchAnnotate,
+              color: const Color(0xFF2563EB),
+              onTap: () => appState.selectTool(ToolType.reader),
+            ),
+            _IosRow(
+              icon: Icons.folder,
+              title: l10n.myFiles,
+              subtitle: l10n.openFolder,
+              color: const Color(0xFF059669),
+              onTap: () => appState.selectTool(ToolType.folderBrowser),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 8),
+          child: Text(
+            l10n.pdfTools,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[400]
+                  : Colors.grey[600],
+            ),
+          ),
+        ),
+        _IosGroup(
+          children: [
+            for (final entry in tools)
+              _IosRow(
+                icon: entry.icon,
+                title: entry.title,
+                subtitle: entry.subtitle,
+                color: entry.color,
+                onTap: () => appState.selectTool(entry.tool),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _IosGroup extends StatelessWidget {
+  final List<Widget> children;
+
+  const _IosGroup({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1F2937) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            if (i > 0)
+              Divider(
+                height: 1,
+                thickness: 1,
+                indent: 56,
+                color:
+                    isDark ? const Color(0xFF374151) : const Color(0xFFF3F4F6),
+              ),
+            children[i],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _IosRow extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _IosRow({
+    required this.icon,
+    required this.title,
+    required this.color,
+    required this.onTap,
+    this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+      leading: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.14),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, size: 19, color: color),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+      ),
+      subtitle: subtitle == null
+          ? null
+          : Text(
+              subtitle!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12),
+            ),
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey[500]
+            : Colors.grey[400],
+      ),
     );
   }
 }

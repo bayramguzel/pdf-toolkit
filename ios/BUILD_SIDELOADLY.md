@@ -137,6 +137,9 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
 - iOS yapısında **Unity Ads/AdMob hiç başlatılmaz**. Reklam banner'ları,
   ödüllü reklam yıldızı, VIP geri sayımı ve reklam kartları gösterilmez.
   Android sürümünde reklamlar aynen çalışmaya devam eder.
+- iOS ana ekranı, gradyan banner/kart ızgarası yerine iOS'a yakışan gruplu
+  liste görünümünü kullanır: üstte **PDF Oku** ve **Dosyalarım**, altında tüm
+  PDF araçları.
 - PDF okuyucu standart görünümdedir: üst çubukta dosya adı, sayfa numarası
   (`3 / 12`), arama, **Dosyalar'a Kaydet**, paylaş ve başka dosya açma
   düğmeleri bulunur. Yakınlaştırma iki parmakla yapılır.
