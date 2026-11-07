@@ -337,5 +337,7 @@
   "openInFiles": "In Dateien öffnen",
   "chooseImageSource": "Bilder hinzufügen aus",
   "photoLibrary": "Fotomediathek",
-  "browseFiles": "Dateien"
+  "browseFiles": "Dateien",
+  "gridView": "Rasteransicht",
+  "listView": "Listenansicht"
 }

@@ -2043,6 +2043,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Files'**
   String get browseFiles;
+
+  /// Toggle: show content as cards
+  ///
+  /// In en, this message translates to:
+  /// **'Grid view'**
+  String get gridView;
+
+  /// Toggle: show content as a list
+  ///
+  /// In en, this message translates to:
+  /// **'List view'**
+  String get listView;
 }
 
 class _AppLocalizationsDelegate

@@ -1074,4 +1074,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get browseFiles => 'Dosyalar';
+
+  @override
+  String get gridView => 'Izgara görünümü';
+
+  @override
+  String get listView => 'Liste görünümü';
 }

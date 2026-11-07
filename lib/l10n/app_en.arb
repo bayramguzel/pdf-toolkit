@@ -1408,5 +1408,13 @@
   "browseFiles": "Files",
   "@browseFiles": {
     "description": "iOS: pick images from the Files app"
+  },
+  "gridView": "Grid view",
+  "@gridView": {
+    "description": "Toggle: show content as cards"
+  },
+  "listView": "List view",
+  "@listView": {
+    "description": "Toggle: show content as a list"
   }
 }

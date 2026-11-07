@@ -307,6 +307,22 @@ class _MainScreenState extends State<MainScreen> {
                 child: const Text('PDF Toolkit'),
               ),
               actions: [
+                // List/grid toggle for the home screen and the "My Files"
+                // browser (iOS only, matching the native Files app).
+                if (PlatformHelper.isIOS &&
+                    (appState.activeTool == ToolType.home ||
+                        appState.activeTool == ToolType.folderBrowser))
+                  IconButton(
+                    icon: Icon(
+                      settings.isGridView
+                          ? Icons.view_agenda_outlined
+                          : Icons.grid_view_rounded,
+                    ),
+                    tooltip: settings.isGridView
+                        ? AppLocalizations.of(context)!.listView
+                        : AppLocalizations.of(context)!.gridView,
+                    onPressed: settings.toggleContentLayout,
+                  ),
                 // Gold Star Icon for Rewarded Ad + Red indicator badge when
                 // expired. Ads (and therefore the reward star) do not exist
                 // in the iOS build.

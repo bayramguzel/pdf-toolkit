@@ -1079,4 +1079,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get browseFiles => 'Dateien';
+
+  @override
+  String get gridView => 'Rasteransicht';
+
+  @override
+  String get listView => 'Listenansicht';
 }

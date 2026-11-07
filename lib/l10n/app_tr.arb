@@ -337,5 +337,7 @@
   "openInFiles": "Dosyalar'da Aç",
   "chooseImageSource": "Görselleri şuradan ekle",
   "photoLibrary": "Fotoğraf Kitaplığı",
-  "browseFiles": "Dosyalar"
+  "browseFiles": "Dosyalar",
+  "gridView": "Izgara görünümü",
+  "listView": "Liste görünümü"
 }

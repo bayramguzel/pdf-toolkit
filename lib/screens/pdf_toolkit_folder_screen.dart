@@ -223,24 +223,51 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isGrid = Provider.of<SettingsProvider>(context).isGridView;
 
     return Column(
       children: [
-        // Sort bar
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+        // Page header. The title gets its own row so long translations
+        // (e.g. "Meine Dateien") never get squeezed beside the sort chips.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 14, 12, 2),
           child: Row(
             children: [
               Expanded(
                 child: Text(
                   l10n.myFiles,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.3,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
               ),
+              if (PlatformHelper.isIOS)
+                IconButton(
+                  tooltip: l10n.openInFiles,
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.folder_copy_outlined, size: 20),
+                  onPressed: () {
+                    final settings =
+                        Provider.of<SettingsProvider>(context, listen: false);
+                    FileUtils.openOutputDirectory(settings.saveDirectory);
+                  },
+                ),
+            ],
+          ),
+        ),
+        // Sort chips scroll horizontally on narrow screens instead of
+        // overflowing.
+        SizedBox(
+          height: 40,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+            children: [
               _SortChip(
                 label: l10n.sortByDate,
                 selected: _sortOrder == _SortOrder.dateDesc,
@@ -258,19 +285,6 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
                 selected: _sortOrder == _SortOrder.sizeDesc,
                 onTap: () => _changeSortOrder(_SortOrder.sizeDesc),
               ),
-              if (PlatformHelper.isIOS) ...[
-                const SizedBox(width: 4),
-                IconButton(
-                  tooltip: l10n.openInFiles,
-                  visualDensity: VisualDensity.compact,
-                  icon: const Icon(Icons.folder_copy_outlined, size: 20),
-                  onPressed: () {
-                    final settings =
-                        Provider.of<SettingsProvider>(context, listen: false);
-                    FileUtils.openOutputDirectory(settings.saveDirectory);
-                  },
-                ),
-              ],
             ],
           ),
         ),
@@ -318,113 +332,249 @@ class _PdfToolkitFolderScreenState extends State<PdfToolkitFolderScreen> {
                     )
                   : RefreshIndicator(
                       onRefresh: _loadFiles,
-                      child: ListView.builder(
-                        itemCount: _files.length,
-                        itemBuilder: (context, index) {
-                          final file = File(_files[index].path);
-                          final name = file.path.split('/').last;
-                          final size =
-                              FileUtils.formatFileSize(file.lengthSync());
-                          final modified = file.lastModifiedSync();
-                          final dateStr =
-                              '${modified.day.toString().padLeft(2, '0')}.${modified.month.toString().padLeft(2, '0')}.${modified.year}  ${modified.hour.toString().padLeft(2, '0')}:${modified.minute.toString().padLeft(2, '0')}';
-
-                          return ListTile(
-                            leading: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: _fileIconColor(name)
-                                    .withAlpha((0.15 * 255).round()),
-                                borderRadius: BorderRadius.circular(10),
+                      child: isGrid
+                          ? GridView.builder(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 12,
+                                crossAxisSpacing: 12,
+                                childAspectRatio: 1.05,
                               ),
-                              child: Icon(
-                                _fileIcon(name),
-                                color: _fileIconColor(name),
-                                size: 24,
-                              ),
-                            ),
-                            title: Text(
-                              name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: isDark ? Colors.white : Colors.black87,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            subtitle: Text(
-                              '$dateStr  •  $size',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isDark
-                                    ? Colors.grey[400]
-                                    : Colors.grey[600],
-                              ),
-                            ),
-                            trailing: PopupMenuButton<String>(
-                              onSelected: (value) {
-                                if (value == 'open') _openFile(file);
-                                if (value == 'share') _shareFile(file);
-                                if (value == 'save') _saveFileToDevice(file);
-                                if (value == 'delete') _deleteFile(file);
+                              itemCount: _files.length,
+                              itemBuilder: (context, index) {
+                                final file = File(_files[index].path);
+                                final name = FileUtils.baseName(file.path);
+                                final modified = file.lastModifiedSync();
+                                final dateStr =
+                                    '${modified.day.toString().padLeft(2, '0')}.${modified.month.toString().padLeft(2, '0')}.${modified.year}';
+                                return _FileGridTile(
+                                  name: name,
+                                  size: FileUtils.formatFileSize(
+                                      file.lengthSync()),
+                                  date: dateStr,
+                                  icon: _fileIcon(name),
+                                  color: _fileIconColor(name),
+                                  onTap: () => _openFile(file),
+                                  menuBuilder: (_) => _buildFileMenu(l10n),
+                                  onMenuSelected: (value) =>
+                                      _handleFileAction(value, file),
+                                );
                               },
-                              itemBuilder: (ctx) => [
-                                PopupMenuItem(
-                                  value: 'open',
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.open_in_new, size: 18),
-                                      const SizedBox(width: 8),
-                                      Text(l10n.openFile),
-                                    ],
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  value: 'share',
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.share, size: 18),
-                                      const SizedBox(width: 8),
-                                      Text(l10n.share),
-                                    ],
-                                  ),
-                                ),
-                                if (PlatformHelper.isIOS)
-                                  PopupMenuItem(
-                                    value: 'save',
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.save_alt, size: 18),
-                                        const SizedBox(width: 8),
-                                        Text(l10n.saveToFiles),
-                                      ],
+                            )
+                          : ListView.builder(
+                              itemCount: _files.length,
+                              itemBuilder: (context, index) {
+                                final file = File(_files[index].path);
+                                final name = file.path.split('/').last;
+                                final size =
+                                    FileUtils.formatFileSize(file.lengthSync());
+                                final modified = file.lastModifiedSync();
+                                final dateStr =
+                                    '${modified.day.toString().padLeft(2, '0')}.${modified.month.toString().padLeft(2, '0')}.${modified.year}  ${modified.hour.toString().padLeft(2, '0')}:${modified.minute.toString().padLeft(2, '0')}';
+
+                                return ListTile(
+                                  leading: Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: _fileIconColor(name)
+                                          .withAlpha((0.15 * 255).round()),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      _fileIcon(name),
+                                      color: _fileIconColor(name),
+                                      size: 24,
                                     ),
                                   ),
-                                PopupMenuItem(
-                                  value: 'delete',
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.delete,
-                                          size: 18, color: Colors.red),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        l10n.deleteFile,
-                                        style:
-                                            const TextStyle(color: Colors.red),
-                                      ),
-                                    ],
+                                  title: Text(
+                                    name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black87,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  subtitle: Text(
+                                    '$dateStr  •  $size',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                  trailing: PopupMenuButton<String>(
+                                    onSelected: (value) =>
+                                        _handleFileAction(value, file),
+                                    itemBuilder: (ctx) => _buildFileMenu(l10n),
+                                  ),
+                                  onTap: () => _openFile(file),
+                                );
+                              },
                             ),
-                            onTap: () => _openFile(file),
-                          );
-                        },
-                      ),
                     ),
         ),
       ],
+    );
+  }
+
+  void _handleFileAction(String value, File file) {
+    if (value == 'open') _openFile(file);
+    if (value == 'share') _shareFile(file);
+    if (value == 'save') _saveFileToDevice(file);
+    if (value == 'delete') _deleteFile(file);
+  }
+
+  List<PopupMenuEntry<String>> _buildFileMenu(AppLocalizations l10n) {
+    return [
+      PopupMenuItem(
+        value: 'open',
+        child: Row(
+          children: [
+            const Icon(Icons.open_in_new, size: 18),
+            const SizedBox(width: 8),
+            Text(l10n.openFile),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 'share',
+        child: Row(
+          children: [
+            const Icon(Icons.share, size: 18),
+            const SizedBox(width: 8),
+            Text(l10n.share),
+          ],
+        ),
+      ),
+      if (PlatformHelper.isIOS)
+        PopupMenuItem(
+          value: 'save',
+          child: Row(
+            children: [
+              const Icon(Icons.save_alt, size: 18),
+              const SizedBox(width: 8),
+              Text(l10n.saveToFiles),
+            ],
+          ),
+        ),
+      PopupMenuItem(
+        value: 'delete',
+        child: Row(
+          children: [
+            const Icon(Icons.delete, size: 18, color: Colors.red),
+            const SizedBox(width: 8),
+            Text(
+              l10n.deleteFile,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ],
+        ),
+      ),
+    ];
+  }
+}
+
+class _FileGridTile extends StatelessWidget {
+  final String name;
+  final String size;
+  final String date;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  final PopupMenuItemBuilder<String> menuBuilder;
+  final ValueChanged<String> onMenuSelected;
+
+  const _FileGridTile({
+    required this.name,
+    required this.size,
+    required this.date,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+    required this.menuBuilder,
+    required this.onMenuSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: isDark ? const Color(0xFF1F2937) : Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(12, 8, 6, 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: color.withAlpha((0.15 * 255).round()),
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: Icon(icon, color: color, size: 20),
+                  ),
+                  const Spacer(),
+                  PopupMenuButton<String>(
+                    onSelected: onMenuSelected,
+                    itemBuilder: menuBuilder,
+                    iconSize: 18,
+                    padding: EdgeInsets.zero,
+                    splashRadius: 18,
+                    constraints: const BoxConstraints(),
+                    icon: Icon(
+                      Icons.more_horiz,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Text(
+                name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  height: 1.2,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                '$date • $size',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

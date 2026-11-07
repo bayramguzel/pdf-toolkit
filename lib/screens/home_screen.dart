@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../providers/app_state.dart';
+import '../providers/settings_provider.dart';
 import '../widgets/tool_card.dart';
 import '../widgets/levelplay_banner_widget.dart';
 import '../utils/platform_helper.dart';
@@ -21,10 +22,12 @@ class HomeScreen extends StatelessWidget {
     // iOS uses a native-looking, grouped list instead of the gradient
     // banner/card layout. Android and web are unchanged.
     if (PlatformHelper.isIOS) {
+      final settings = Provider.of<SettingsProvider>(context);
       return _IosHomeLayout(
         appState: appState,
         l10n: l10n,
         bottomPadding: bottomPadding,
+        isGrid: settings.isGridView,
       );
     }
 
@@ -559,16 +562,26 @@ class _IosHomeLayout extends StatelessWidget {
   final AppState appState;
   final AppLocalizations l10n;
   final double bottomPadding;
+  final bool isGrid;
 
   const _IosHomeLayout({
     required this.appState,
     required this.l10n,
     required this.bottomPadding,
+    required this.isGrid,
   });
 
   @override
   Widget build(BuildContext context) {
     final tools = <_IosToolEntry>[
+      // Reading comes first in the PDF tools group.
+      _IosToolEntry(
+        icon: Icons.menu_book,
+        title: l10n.readPdf,
+        subtitle: l10n.viewSearchAnnotate,
+        color: const Color(0xFF2563EB),
+        tool: ToolType.reader,
+      ),
       _IosToolEntry(
         icon: Icons.merge,
         title: l10n.mergePdf,
@@ -672,16 +685,9 @@ class _IosHomeLayout extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.fromLTRB(16, 12, 16, bottomPadding + 24),
       children: [
-        // Primary actions, like the first group in a native iOS app.
+        // Library: saved files live here.
         _IosGroup(
           children: [
-            _IosRow(
-              icon: Icons.menu_book,
-              title: l10n.readPdf,
-              subtitle: l10n.viewSearchAnnotate,
-              color: const Color(0xFF2563EB),
-              onTap: () => appState.selectTool(ToolType.reader),
-            ),
             _IosRow(
               icon: Icons.folder,
               title: l10n.myFiles,
@@ -706,19 +712,121 @@ class _IosHomeLayout extends StatelessWidget {
             ),
           ),
         ),
-        _IosGroup(
-          children: [
-            for (final entry in tools)
-              _IosRow(
+        if (isGrid)
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.15,
+            ),
+            itemCount: tools.length,
+            itemBuilder: (context, index) {
+              final entry = tools[index];
+              return _IosToolTile(
                 icon: entry.icon,
                 title: entry.title,
                 subtitle: entry.subtitle,
                 color: entry.color,
                 onTap: () => appState.selectTool(entry.tool),
-              ),
-          ],
-        ),
+              );
+            },
+          )
+        else
+          _IosGroup(
+            children: [
+              for (final entry in tools)
+                _IosRow(
+                  icon: entry.icon,
+                  title: entry.title,
+                  subtitle: entry.subtitle,
+                  color: entry.color,
+                  onTap: () => appState.selectTool(entry.tool),
+                ),
+            ],
+          ),
       ],
+    );
+  }
+}
+
+/// Card used in the iOS grid layout. Mirrors the list rows' icon treatment so
+/// switching layouts keeps the same visual language.
+class _IosToolTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _IosToolTile({
+    required this.icon,
+    required this.title,
+    required this.color,
+    required this.onTap,
+    this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: isDark ? const Color(0xFF1F2937) : Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, size: 21, color: color),
+              ),
+              const Spacer(),
+              Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  height: 1.15,
+                ),
+              ),
+              if (subtitle != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    subtitle!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

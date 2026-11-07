@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Color, Locale, ThemeMode;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// How content (home tools, saved files) is presented.
+enum ContentLayout { list, grid }
+
 class SettingsProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.dark;
   Color _primaryColor = const Color(0xFF22D3EE); // Cyan
@@ -10,6 +13,7 @@ class SettingsProvider extends ChangeNotifier {
   List<String> _recentFiles = [];
   bool _isLocaleManuallySet = false;
   String _lastSplashDate = '';
+  ContentLayout _contentLayout = ContentLayout.list;
 
   ThemeMode get themeMode => _themeMode;
   Color get primaryColor => _primaryColor;
@@ -18,6 +22,8 @@ class SettingsProvider extends ChangeNotifier {
   List<String> get recentFiles => _recentFiles;
   bool get isLocaleManuallySet => _isLocaleManuallySet;
   String get lastSplashDate => _lastSplashDate;
+  ContentLayout get contentLayout => _contentLayout;
+  bool get isGridView => _contentLayout == ContentLayout.grid;
 
   // Available color themes
   static const Map<String, Color> colorThemes = {
@@ -65,6 +71,12 @@ class SettingsProvider extends ChangeNotifier {
 
     _recentFiles = prefs.getStringList('recentFiles') ?? [];
     _lastSplashDate = prefs.getString('lastSplashDate') ?? '';
+    final layoutIndex = prefs.getInt('contentLayout');
+    if (layoutIndex != null &&
+        layoutIndex >= 0 &&
+        layoutIndex < ContentLayout.values.length) {
+      _contentLayout = ContentLayout.values[layoutIndex];
+    }
     notifyListeners();
   }
 
@@ -87,6 +99,18 @@ class SettingsProvider extends ChangeNotifier {
     await prefs.setInt('primaryColor', color.toARGB32());
     notifyListeners();
   }
+
+  Future<void> setContentLayout(ContentLayout layout) async {
+    if (_contentLayout == layout) return;
+    _contentLayout = layout;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('contentLayout', layout.index);
+    notifyListeners();
+  }
+
+  Future<void> toggleContentLayout() => setContentLayout(
+        isGridView ? ContentLayout.list : ContentLayout.grid,
+      );
 
   Future<void> setSaveDirectory(String directory) async {
     _saveDirectory = directory;

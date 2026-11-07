@@ -138,8 +138,13 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
   ödüllü reklam yıldızı, VIP geri sayımı ve reklam kartları gösterilmez.
   Android sürümünde reklamlar aynen çalışmaya devam eder.
 - iOS ana ekranı, gradyan banner/kart ızgarası yerine iOS'a yakışan gruplu
-  liste görünümünü kullanır: üstte **PDF Oku** ve **Dosyalarım**, altında tüm
-  PDF araçları.
+  görünümü kullanır. Üstte **Dosyalarım**, altında **PDF Araçları** başlığı ve
+  en başta **PDF Oku** olacak şekilde tüm araçlar listelenir.
+- Başlık çubuğundaki **ızgara/liste simgesi** ile ana ekran ve Dosyalarım
+  içeriği liste ya da kart görünümünde gösterilebilir. Seçim hatırlanır.
+- Dosyalarım sayfasında başlık kendi satırındadır ve sıralama seçenekleri
+  yatay kaydırılır; uzun çeviriler (ör. "Meine Dateien") artık tek sütuna
+  sıkışmaz.
 - PDF okuyucu standart görünümdedir: üst çubukta dosya adı, sayfa numarası
   (`3 / 12`), arama, **Dosyalar'a Kaydet**, paylaş ve başka dosya açma
   düğmeleri bulunur. Yakınlaştırma iki parmakla yapılır.

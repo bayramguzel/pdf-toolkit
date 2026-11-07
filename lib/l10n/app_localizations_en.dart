@@ -1072,4 +1072,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browseFiles => 'Files';
+
+  @override
+  String get gridView => 'Grid view';
+
+  @override
+  String get listView => 'List view';
 }
