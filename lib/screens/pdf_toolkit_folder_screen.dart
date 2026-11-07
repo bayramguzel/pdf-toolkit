@@ -8,6 +8,7 @@ import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../utils/platform_helper.dart';
+import '../widgets/auto_fit_text.dart';
 
 enum _SortOrder { name, dateDesc, sizeDesc }
 
@@ -507,17 +508,20 @@ class _FileGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
-      color: isDark ? const Color(0xFF1F2937) : Colors.white,
-      borderRadius: BorderRadius.circular(14),
+      color: isDark ? const Color(0xFF111318) : Colors.white,
+      borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.fromLTRB(12, 8, 6, 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+              color: isDark
+                  ? color.withValues(alpha: 0.75)
+                  : const Color(0xFFE5E7EB),
+              width: isDark ? 1.3 : 1,
             ),
           ),
           child: Column(
@@ -529,7 +533,7 @@ class _FileGridTile extends StatelessWidget {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: color.withAlpha((0.15 * 255).round()),
+                      color: color.withValues(alpha: isDark ? 0.16 : 0.12),
                       borderRadius: BorderRadius.circular(9),
                     ),
                     child: Icon(icon, color: color, size: 20),
@@ -550,10 +554,10 @@ class _FileGridTile extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              Text(
+              AutoFitText(
                 name,
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                minFontSize: 9.5,
                 style: TextStyle(
                   fontSize: 13,
                   height: 1.2,
@@ -562,10 +566,10 @@ class _FileGridTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 3),
-              Text(
+              AutoFitText(
                 '$date • $size',
                 maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                minFontSize: 9,
                 style: TextStyle(
                   fontSize: 11,
                   color: isDark ? Colors.grey[400] : Colors.grey[600],

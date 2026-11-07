@@ -137,9 +137,14 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
 - iOS yapısında **Unity Ads/AdMob hiç başlatılmaz**. Reklam banner'ları,
   ödüllü reklam yıldızı, VIP geri sayımı ve reklam kartları gösterilmez.
   Android sürümünde reklamlar aynen çalışmaya devam eder.
-- iOS ana ekranı, gradyan banner/kart ızgarası yerine iOS'a yakışan gruplu
-  görünümü kullanır. Üstte **Dosyalarım**, altında **PDF Araçları** başlığı ve
-  en başta **PDF Oku** olacak şekilde tüm araçlar listelenir.
+- iOS ana ekranı, gradyan banner/kart ızgarası yerine iOS'a yakışan düzeni
+  kullanır. Üstte **Dosyalarım** kartı, hemen altında tek satırlık **PDF Oku**
+  kartı (en çok kullanılan işlem), ardından **PDF Araçları** başlığı ve tüm
+  araçlar gelir.
+- Kartların her biri farklı bir pastel renktedir ve ikonlar iOS/SF Symbols
+  görünümüne uygun Cupertino ikonlarıdır. Koyu modda kart zeminleri siyah,
+  çerçeveleri ise o kartın pastel rengindedir. Kart içindeki tüm yazılar
+  otomatik ölçeklenerek karta taşmadan sığar.
 - Başlık çubuğundaki **ızgara/liste simgesi** ile ana ekran ve Dosyalarım
   içeriği liste ya da kart görünümünde gösterilebilir. Seçim hatırlanır.
 - Dosyalarım sayfasında başlık kendi satırındadır ve sıralama seçenekleri

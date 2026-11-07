@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
+import '../widgets/auto_fit_text.dart';
 import '../widgets/tool_card.dart';
 import '../widgets/levelplay_banner_widget.dart';
 import '../utils/platform_helper.dart';
@@ -544,20 +546,23 @@ class _IosToolEntry {
   final IconData icon;
   final String title;
   final String? subtitle;
-  final Color color;
+  final Color accent;
+  final Color pastel;
   final ToolType tool;
 
   const _IosToolEntry({
     required this.icon,
     required this.title,
     required this.tool,
-    required this.color,
+    required this.accent,
+    required this.pastel,
     this.subtitle,
   });
 }
 
-/// Native-looking, grouped list used on iOS instead of the gradient hero
-/// banner and pastel card grid. No ad containers are present here.
+/// Native-looking home layout used on iOS. Each tool gets its own pastel
+/// accent: pastel fills in light mode and black cards with a pastel border in
+/// dark mode. Icons are Cupertino (SF-Symbol-like) so the screen feels native.
 class _IosHomeLayout extends StatelessWidget {
   final AppState appState;
   final AppLocalizations l10n;
@@ -574,110 +579,116 @@ class _IosHomeLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tools = <_IosToolEntry>[
-      // Reading comes first in the PDF tools group.
       _IosToolEntry(
-        icon: Icons.menu_book,
-        title: l10n.readPdf,
-        subtitle: l10n.viewSearchAnnotate,
-        color: const Color(0xFF2563EB),
-        tool: ToolType.reader,
-      ),
-      _IosToolEntry(
-        icon: Icons.merge,
+        icon: CupertinoIcons.square_on_square,
         title: l10n.mergePdf,
         subtitle: l10n.combineFiles,
-        color: const Color(0xFF3B82F6),
+        accent: const Color(0xFF0284C7),
+        pastel: const Color(0xFFE0F2FE),
         tool: ToolType.merger,
       ),
       _IosToolEntry(
-        icon: Icons.call_split,
+        icon: CupertinoIcons.scissors,
         title: l10n.splitPdf,
         subtitle: l10n.extractPages,
-        color: const Color(0xFF10B981),
+        accent: const Color(0xFF16A34A),
+        pastel: const Color(0xFFDCFCE7),
         tool: ToolType.splitter,
       ),
       _IosToolEntry(
-        icon: Icons.compress,
+        icon: CupertinoIcons.archivebox,
         title: l10n.compressPdf,
         subtitle: l10n.reduceSize,
-        color: const Color(0xFFF59E0B),
+        accent: const Color(0xFFCA8A04),
+        pastel: const Color(0xFFFEF9C3),
         tool: ToolType.compressor,
       ),
       _IosToolEntry(
-        icon: Icons.rotate_right,
+        icon: CupertinoIcons.rotate_right,
         title: l10n.rotatePdf,
         subtitle: l10n.turnPages,
-        color: const Color(0xFFF97316),
+        accent: const Color(0xFFEA580C),
+        pastel: const Color(0xFFFFEDD5),
         tool: ToolType.rotate,
       ),
       _IosToolEntry(
-        icon: Icons.delete_sweep,
+        icon: CupertinoIcons.delete,
         title: l10n.removePdf,
         subtitle: l10n.deletePages,
-        color: const Color(0xFFEF4444),
+        accent: const Color(0xFFDC2626),
+        pastel: const Color(0xFFFEE2E2),
         tool: ToolType.removePages,
       ),
       _IosToolEntry(
-        icon: Icons.reorder,
+        icon: CupertinoIcons.square_grid_2x2,
         title: l10n.reorderPdf,
         subtitle: l10n.arrangePages,
-        color: const Color(0xFF6366F1),
+        accent: const Color(0xFF4F46E5),
+        pastel: const Color(0xFFE0E7FF),
         tool: ToolType.reorder,
       ),
       _IosToolEntry(
-        icon: Icons.water_drop,
+        icon: CupertinoIcons.drop,
         title: l10n.watermarkPdf,
         subtitle: l10n.addTextImage,
-        color: const Color(0xFF0EA5E9),
+        accent: const Color(0xFF0891B2),
+        pastel: const Color(0xFFCFFAFE),
         tool: ToolType.watermark,
       ),
       _IosToolEntry(
-        icon: Icons.lock,
+        icon: CupertinoIcons.lock,
         title: l10n.encryptPdf,
         subtitle: l10n.addPassword,
-        color: const Color(0xFFEC4899),
+        accent: const Color(0xFFDB2777),
+        pastel: const Color(0xFFFCE7F3),
         tool: ToolType.encryptor,
       ),
       _IosToolEntry(
-        icon: Icons.lock_open,
+        icon: CupertinoIcons.lock_open,
         title: l10n.unlock,
         subtitle: l10n.removePass,
-        color: const Color(0xFF8B5CF6),
+        accent: const Color(0xFF9333EA),
+        pastel: const Color(0xFFF3E8FF),
         tool: ToolType.unlocker,
       ),
       _IosToolEntry(
-        icon: Icons.image,
+        icon: CupertinoIcons.photo,
         title: l10n.pdfToImage,
         subtitle: l10n.pngJpeg,
-        color: const Color(0xFFDB2777),
+        accent: const Color(0xFFC026D3),
+        pastel: const Color(0xFFFAE8FF),
         tool: ToolType.pdfToImage,
       ),
       _IosToolEntry(
-        icon: Icons.article,
+        icon: CupertinoIcons.doc_text,
         title: l10n.pdfToText,
         subtitle: l10n.toRtfTxt,
-        color: const Color(0xFF7C3AED),
+        accent: const Color(0xFF7C3AED),
+        pastel: const Color(0xFFEDE9FE),
         tool: ToolType.pdfToWord,
       ),
       _IosToolEntry(
-        icon: Icons.add_photo_alternate,
+        icon: CupertinoIcons.photo_on_rectangle,
         title: l10n.imageToPdf,
         subtitle: l10n.convertImages,
-        color: const Color(0xFF6366F1),
+        accent: const Color(0xFF0D9488),
+        pastel: const Color(0xFFCCFBF1),
         tool: ToolType.imageToPdf,
       ),
       _IosToolEntry(
-        icon: Icons.text_snippet,
+        icon: CupertinoIcons.doc_plaintext,
         title: l10n.textToPdf,
         subtitle: l10n.convertTxt,
-        color: const Color(0xFF14B8A6),
+        accent: const Color(0xFFE11D48),
+        pastel: const Color(0xFFFFE4E6),
         tool: ToolType.wordToPdf,
       ),
       _IosToolEntry(
-        icon: Icons.note_alt,
+        icon: CupertinoIcons.pencil,
         title: l10n.notepad,
         subtitle: l10n.notepadDescription,
-        color: const Color(0xFFD97706),
+        accent: const Color(0xFFD97706),
+        pastel: const Color(0xFFFEF3C7),
         tool: ToolType.notepad,
       ),
     ];
@@ -685,21 +696,27 @@ class _IosHomeLayout extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.fromLTRB(16, 12, 16, bottomPadding + 24),
       children: [
-        // Library: saved files live here.
-        _IosGroup(
-          children: [
-            _IosRow(
-              icon: Icons.folder,
-              title: l10n.myFiles,
-              subtitle: l10n.openFolder,
-              color: const Color(0xFF059669),
-              onTap: () => appState.selectTool(ToolType.folderBrowser),
-            ),
-          ],
+        // Primary actions as full-width cards: My Files first, then Read PDF
+        // (kept on a single line because it is the most used action).
+        _IosFeatureCard(
+          icon: CupertinoIcons.folder_fill,
+          title: l10n.myFiles,
+          subtitle: l10n.openFolder,
+          accent: const Color(0xFF059669),
+          pastel: const Color(0xFFDCFCE7),
+          onTap: () => appState.selectTool(ToolType.folderBrowser),
+        ),
+        const SizedBox(height: 12),
+        _IosFeatureCard(
+          icon: CupertinoIcons.book_fill,
+          title: l10n.readPdf,
+          accent: const Color(0xFF2563EB),
+          pastel: const Color(0xFFE0F2FE),
+          onTap: () => appState.selectTool(ToolType.reader),
         ),
         const SizedBox(height: 24),
         Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 8),
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             l10n.pdfTools,
             style: TextStyle(
@@ -721,7 +738,7 @@ class _IosHomeLayout extends StatelessWidget {
               crossAxisCount: 2,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 1.15,
+              childAspectRatio: 1.05,
             ),
             itemCount: tools.length,
             itemBuilder: (context, index) {
@@ -730,7 +747,8 @@ class _IosHomeLayout extends StatelessWidget {
                 icon: entry.icon,
                 title: entry.title,
                 subtitle: entry.subtitle,
-                color: entry.color,
+                accent: entry.accent,
+                pastel: entry.pastel,
                 onTap: () => appState.selectTool(entry.tool),
               );
             },
@@ -743,7 +761,8 @@ class _IosHomeLayout extends StatelessWidget {
                   icon: entry.icon,
                   title: entry.title,
                   subtitle: entry.subtitle,
-                  color: entry.color,
+                  accent: entry.accent,
+                  pastel: entry.pastel,
                   onTap: () => appState.selectTool(entry.tool),
                 ),
             ],
@@ -753,19 +772,20 @@ class _IosHomeLayout extends StatelessWidget {
   }
 }
 
-/// Card used in the iOS grid layout. Mirrors the list rows' icon treatment so
-/// switching layouts keeps the same visual language.
-class _IosToolTile extends StatelessWidget {
+/// Full-width card for the two primary home actions.
+class _IosFeatureCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? subtitle;
-  final Color color;
+  final Color accent;
+  final Color pastel;
   final VoidCallback onTap;
 
-  const _IosToolTile({
+  const _IosFeatureCard({
     required this.icon,
     required this.title,
-    required this.color,
+    required this.accent,
+    required this.pastel,
     required this.onTap,
     this.subtitle,
   });
@@ -773,53 +793,170 @@ class _IosToolTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fill = isDark ? const Color(0xFF111318) : pastel;
+    final border = isDark
+        ? accent.withValues(alpha: 0.85)
+        : Color.alphaBlend(Colors.black.withValues(alpha: 0.16), pastel);
+    final iconColor = isDark
+        ? accent
+        : Color.alphaBlend(Colors.black.withValues(alpha: 0.3), accent);
+
     return Material(
-      color: isDark ? const Color(0xFF1F2937) : Colors.white,
-      borderRadius: BorderRadius.circular(14),
+      color: fill,
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: isDark ? 1.4 : 1.2),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? accent.withValues(alpha: 0.16)
+                      : Colors.white.withValues(alpha: 0.65),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Icon(icon, size: 23, color: iconColor),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AutoFitText(
+                      title,
+                      maxLines: 1,
+                      minFontSize: 13,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        height: 1.2,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    if (subtitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: AutoFitText(
+                          subtitle!,
+                          maxLines: 1,
+                          minFontSize: 10,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark
+                                ? Colors.white70
+                                : Colors.black.withValues(alpha: 0.55),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Icon(
+                CupertinoIcons.chevron_forward,
+                size: 18,
+                color: isDark
+                    ? Colors.white38
+                    : Colors.black.withValues(alpha: 0.3),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Card used in the iOS grid layout.
+class _IosToolTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Color accent;
+  final Color pastel;
+  final VoidCallback onTap;
+
+  const _IosToolTile({
+    required this.icon,
+    required this.title,
+    required this.accent,
+    required this.pastel,
+    required this.onTap,
+    this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fill = isDark ? const Color(0xFF111318) : pastel;
+    final border = isDark
+        ? accent.withValues(alpha: 0.85)
+        : Color.alphaBlend(Colors.black.withValues(alpha: 0.14), pastel);
+    final iconColor = isDark
+        ? accent
+        : Color.alphaBlend(Colors.black.withValues(alpha: 0.32), accent);
+    final titleColor = isDark ? Colors.white : Colors.black87;
+    final subtitleColor =
+        isDark ? Colors.white70 : Colors.black.withValues(alpha: 0.55);
+
+    return Material(
+      color: fill,
+      borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
-            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: isDark ? 1.4 : 1.2),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 38,
-                height: 38,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
+                  color: isDark
+                      ? accent.withValues(alpha: 0.16)
+                      : Colors.white.withValues(alpha: 0.62),
+                  borderRadius: BorderRadius.circular(11),
                 ),
-                child: Icon(icon, size: 21, color: color),
+                child: Icon(icon, size: 22, color: iconColor),
               ),
               const Spacer(),
-              Text(
+              AutoFitText(
                 title,
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                minFontSize: 10,
+                style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  height: 1.15,
+                  fontWeight: FontWeight.w700,
+                  height: 1.18,
+                  color: titleColor,
                 ),
               ),
               if (subtitle != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Text(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: AutoFitText(
                     subtitle!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    minFontSize: 9,
                     style: TextStyle(
                       fontSize: 11,
-                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      height: 1.15,
+                      color: subtitleColor,
                     ),
                   ),
                 ),
@@ -841,10 +978,10 @@ class _IosGroup extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1F2937) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF111318) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+          color: isDark ? const Color(0xFF2A2D34) : const Color(0xFFE5E7EB),
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -855,9 +992,9 @@ class _IosGroup extends StatelessWidget {
               Divider(
                 height: 1,
                 thickness: 1,
-                indent: 56,
+                indent: 62,
                 color:
-                    isDark ? const Color(0xFF374151) : const Color(0xFFF3F4F6),
+                    isDark ? const Color(0xFF2A2D34) : const Color(0xFFF3F4F6),
               ),
             children[i],
           ],
@@ -871,33 +1008,41 @@ class _IosRow extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? subtitle;
-  final Color color;
+  final Color accent;
+  final Color pastel;
   final VoidCallback onTap;
 
   const _IosRow({
     required this.icon,
     required this.title,
-    required this.color,
+    required this.accent,
+    required this.pastel,
     required this.onTap,
     this.subtitle,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDark
+        ? accent
+        : Color.alphaBlend(Colors.black.withValues(alpha: 0.3), accent);
     return ListTile(
       onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       leading: Container(
-        width: 32,
-        height: 32,
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.14),
-          borderRadius: BorderRadius.circular(8),
+          color: isDark ? accent.withValues(alpha: 0.16) : pastel,
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, size: 19, color: color),
+        child: Icon(icon, size: 20, color: iconColor),
       ),
       title: Text(
         title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
       ),
       subtitle: subtitle == null
@@ -906,13 +1051,15 @@ class _IosRow extends StatelessWidget {
               subtitle!,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12),
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.white60 : Colors.black54,
+              ),
             ),
       trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.grey[500]
-            : Colors.grey[400],
+        CupertinoIcons.chevron_forward,
+        size: 16,
+        color: isDark ? Colors.white30 : Colors.black26,
       ),
     );
   }
