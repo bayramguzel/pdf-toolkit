@@ -292,7 +292,9 @@ class _MainScreenState extends State<MainScreen> {
           },
           child: Scaffold(
             appBar: AppBar(
-              centerTitle: PlatformHelper.isIOS,
+              // The app name stays flush left on every platform, matching
+              // the home dashboard layout.
+              centerTitle: false,
               titleSpacing: appState.activeTool == ToolType.home ? 16 : 0,
               leading: appState.activeTool != ToolType.home
                   ? IconButton(

@@ -8,7 +8,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../providers/app_state.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
@@ -234,8 +234,7 @@ class _PdfReorderScreenState extends State<PdfReorderScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.reorder,
-                                  size: 64, color: Color(0xFF818CF8)), // Indigo
+                              const ToolPageBadge(tool: ToolType.reorder),
                               const SizedBox(height: 16),
                               Text(
                                 l10n.reorderPdf,
@@ -256,8 +255,6 @@ class _PdfReorderScreenState extends State<PdfReorderScreen> {
                               ),
                               const SizedBox(height: 32),
                               FileDropzone(
-                                icon: ToolMeta.of(ToolType.reorder).icon,
-                                accent: ToolMeta.of(ToolType.reorder).color,
                                 onFileSelect: _selectPdfFile,
                                 allowMultiple: false,
                               ),

@@ -9,7 +9,7 @@ import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 
@@ -210,8 +210,7 @@ class _PdfToWordScreenState extends State<PdfToWordScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Header Section (Standardized)
-              const Icon(Icons.article,
-                  size: 64, color: Color(0xFFD946EF)), // Fuchsia
+              const ToolPageBadge(tool: ToolType.pdfToWord),
               const SizedBox(height: 16),
               Text(
                 l10n.pdfToText,
@@ -270,8 +269,6 @@ class _PdfToWordScreenState extends State<PdfToWordScreen> {
                 ),
                 const SizedBox(height: 24),
                 FileDropzone(
-                  icon: ToolMeta.of(ToolType.pdfToWord).icon,
-                  accent: ToolMeta.of(ToolType.pdfToWord).color,
                   onFileSelect: _handleFileSelect,
                   fileTypeLabel: 'PDF',
                 ),

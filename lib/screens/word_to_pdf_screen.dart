@@ -9,7 +9,7 @@ import 'package:syncfusion_flutter_pdf/pdf.dart' as sf_pdf;
 import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 import '../utils/file_utils.dart';
@@ -204,8 +204,7 @@ class _WordToPdfScreenState extends State<WordToPdfScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.text_snippet,
-                  size: 64, color: Color(0xFF7C3AED)),
+              const ToolPageBadge(tool: ToolType.wordToPdf),
               const SizedBox(height: 16),
               Text(
                 l10n.textToPdf,
@@ -249,8 +248,6 @@ class _WordToPdfScreenState extends State<WordToPdfScreen> {
                 ),
               if (_pickedFile == null) ...[
                 FileDropzone(
-                  icon: ToolMeta.of(ToolType.wordToPdf).icon,
-                  accent: ToolMeta.of(ToolType.wordToPdf).color,
                   onFileSelect: _handleFileSelect,
                   fileTypeLabel: 'Text/RTF',
                   allowedExtensions: const ['txt', 'rtf'],

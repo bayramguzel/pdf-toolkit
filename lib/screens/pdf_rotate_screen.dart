@@ -9,7 +9,7 @@ import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 
@@ -193,8 +193,7 @@ class _PdfRotateScreenState extends State<PdfRotateScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.rotate_right,
-                  size: 64, color: Color(0xFFFB923C)),
+              const ToolPageBadge(tool: ToolType.rotate),
               const SizedBox(height: 16),
               Text(
                 l10n.rotatePdf,
@@ -214,10 +213,7 @@ class _PdfRotateScreenState extends State<PdfRotateScreen> {
               ),
               const SizedBox(height: 32),
               if (_pickedFile == null) ...[
-                FileDropzone(
-                    icon: ToolMeta.of(ToolType.rotate).icon,
-                    accent: ToolMeta.of(ToolType.rotate).color,
-                    onFileSelect: _selectPdfFile),
+                FileDropzone(onFileSelect: _selectPdfFile),
               ] else ...[
                 Card(
                   child: Padding(

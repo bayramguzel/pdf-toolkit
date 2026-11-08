@@ -163,9 +163,11 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
 - **Tüm PDF araçları iOS'ta çalışır:** birleştirme, bölme, sıkıştırma,
   döndürme, sayfa silme/sıralama, filigran, şifreleme/kaldırma, PDF → resim,
   PDF → metin/Word (RTF), resim → PDF, Word → PDF, not defteri ve okuyucu.
-- Araç ekranlarında **işlem ikonu artık ana ekrandaki kartla aynıdır**: dosya
-  seçim alanı, o aracın kart ikonunu ve kart rengini gösterir. **PDF Oku**
-  ekranı da aynı ikon stiline sahiptir.
+- Araç ekranlarında **sayfa adının üstündeki ikon ana ekrandaki kartla aynıdır**:
+  her ekran, o aracın kart ikonunu ve kart rengini kart tarzında yuvarlak bir
+  rozet olarak gösterir (iOS'ta Cupertino ikonları). Dosya seçim alanındaki
+  standart yükleme ikonu korunur. **PDF Oku** ekranı da kart ikonlu rozetle
+  açılır. Başlık çubuğundaki **PDF Toolkit** adı her platformda sola yaslıdır.
 - Ana ekranda kart büyüklüğü ile ikon boyutu uyumludur; ikonlar kart dolduracak
   kadar büyütüldü (ızgara kartları, tam genişlik kartlar ve liste satırları).
 - **Varsayılan/ listede görünen PDF uygulaması:** iOS `Info.plist`

@@ -8,7 +8,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 import '../utils/file_utils.dart';
@@ -208,8 +208,7 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.merge,
-                        size: 64, color: Color(0xFF22D3EE)), // Cyan
+                    const ToolPageBadge(tool: ToolType.merger),
                     const SizedBox(height: 16),
                     Text(
                       l10n.mergePdf,
@@ -229,10 +228,7 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                     ),
                     const SizedBox(height: 24),
                     FileDropzone(
-                        icon: ToolMeta.of(ToolType.merger).icon,
-                        accent: ToolMeta.of(ToolType.merger).color,
-                        onFileSelect: _handleFileSelect,
-                        allowMultiple: true),
+                        onFileSelect: _handleFileSelect, allowMultiple: true),
                   ],
                 ),
               ),
@@ -347,8 +343,6 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: FileDropzone(
-                      icon: ToolMeta.of(ToolType.merger).icon,
-                      accent: ToolMeta.of(ToolType.merger).color,
                       onFileSelect: _handleFileSelect,
                       allowMultiple: true,
                     ),

@@ -8,7 +8,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 import '../utils/file_utils.dart';
@@ -229,8 +229,7 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.compress,
-                        size: 64, color: Color(0xFFFACC15)), // Yellow
+                    const ToolPageBadge(tool: ToolType.compressor),
                     const SizedBox(height: 16),
                     Text(
                       l10n.compressPdf,
@@ -249,10 +248,7 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
-                    FileDropzone(
-                        icon: ToolMeta.of(ToolType.compressor).icon,
-                        accent: ToolMeta.of(ToolType.compressor).color,
-                        onFileSelect: _handleFileSelect),
+                    FileDropzone(onFileSelect: _handleFileSelect),
                   ],
                 ),
               ),

@@ -8,7 +8,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../providers/app_state.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
@@ -269,8 +269,7 @@ class _PdfWatermarkScreenState extends State<PdfWatermarkScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.water_drop,
-                                  size: 64, color: Color(0xFF60A5FA)), // Blue
+                              const ToolPageBadge(tool: ToolType.watermark),
                               const SizedBox(height: 16),
                               Text(
                                 l10n.watermarkPdf,
@@ -291,8 +290,6 @@ class _PdfWatermarkScreenState extends State<PdfWatermarkScreen> {
                               ),
                               const SizedBox(height: 32),
                               FileDropzone(
-                                icon: ToolMeta.of(ToolType.watermark).icon,
-                                accent: ToolMeta.of(ToolType.watermark).color,
                                 onFileSelect: _selectPdfFile,
                                 allowMultiple: false,
                               ),

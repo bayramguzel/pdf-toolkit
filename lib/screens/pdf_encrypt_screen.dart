@@ -9,7 +9,7 @@ import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 
@@ -174,8 +174,7 @@ class _PdfEncryptScreenState extends State<PdfEncryptScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.lock,
-                  size: 64, color: Color(0xFFE11D48)), // Rose
+              const ToolPageBadge(tool: ToolType.encryptor),
               const SizedBox(height: 16),
               Text(
                 l10n.encryptPdf,
@@ -193,10 +192,7 @@ class _PdfEncryptScreenState extends State<PdfEncryptScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              FileDropzone(
-                  icon: ToolMeta.of(ToolType.encryptor).icon,
-                  accent: ToolMeta.of(ToolType.encryptor).color,
-                  onFileSelect: _handleFileSelect),
+              FileDropzone(onFileSelect: _handleFileSelect),
             ],
           ),
         )))

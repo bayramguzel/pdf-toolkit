@@ -8,7 +8,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../providers/app_state.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
@@ -193,8 +193,7 @@ class _PdfRemovePagesScreenState extends State<PdfRemovePagesScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.delete_sweep,
-                                size: 64, color: Color(0xFFF87171)), // Red
+                            const ToolPageBadge(tool: ToolType.removePages),
                             const SizedBox(height: 16),
                             Text(
                               l10n.removePdf,
@@ -214,8 +213,6 @@ class _PdfRemovePagesScreenState extends State<PdfRemovePagesScreen> {
                             ),
                             const SizedBox(height: 24),
                             FileDropzone(
-                              icon: ToolMeta.of(ToolType.removePages).icon,
-                              accent: ToolMeta.of(ToolType.removePages).color,
                               onFileSelect: _selectPdfFile,
                               allowMultiple: false,
                             ),

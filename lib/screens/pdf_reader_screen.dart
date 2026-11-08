@@ -7,7 +7,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../providers/app_state.dart';
 import '../widgets/loading_spinner.dart';
 import '../utils/file_utils.dart';
@@ -301,6 +301,8 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const ToolPageBadge(tool: ToolType.reader),
+              const SizedBox(height: 16),
               Text(l10n.readPdf,
                   style: const TextStyle(
                       fontSize: 28, fontWeight: FontWeight.bold)),
@@ -313,10 +315,7 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              FileDropzone(
-                  icon: ToolMeta.of(ToolType.reader).icon,
-                  accent: ToolMeta.of(ToolType.reader).color,
-                  onFileSelect: _handleFileSelected),
+              FileDropzone(onFileSelect: _handleFileSelected),
             ],
           ),
         ),

@@ -12,7 +12,7 @@ import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
+import '../widgets/tool_page_badge.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/image_gallery_success_screen.dart';
 
@@ -315,7 +315,7 @@ class _PdfToImageScreenState extends State<PdfToImageScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.image, size: 64, color: Color(0xFFDB2777)),
+                const ToolPageBadge(tool: ToolType.pdfToImage),
                 const SizedBox(height: 16),
                 Text(
                   l10n.pdfToImage,
@@ -461,10 +461,7 @@ class _PdfToImageScreenState extends State<PdfToImageScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                FileDropzone(
-                    icon: ToolMeta.of(ToolType.pdfToImage).icon,
-                    accent: ToolMeta.of(ToolType.pdfToImage).color,
-                    onFileSelect: _handleFileSelect),
+                FileDropzone(onFileSelect: _handleFileSelect),
               ],
             ),
           ),

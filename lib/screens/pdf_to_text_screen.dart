@@ -9,7 +9,6 @@ import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
-import '../utils/tool_meta.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 
@@ -358,10 +357,7 @@ class _PdfToTextScreenState extends State<PdfToTextScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              FileDropzone(
-                  icon: ToolMeta.of(ToolType.pdfToWord).icon,
-                  accent: ToolMeta.of(ToolType.pdfToWord).color,
-                  onFileSelect: _handleFileSelect),
+              FileDropzone(onFileSelect: _handleFileSelect),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => appState.goHome(),
