@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -8,6 +8,8 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
+import '../utils/tool_meta.dart';
+import '../providers/app_state.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 
@@ -289,6 +291,8 @@ class _PdfWatermarkScreenState extends State<PdfWatermarkScreen> {
                               ),
                               const SizedBox(height: 32),
                               FileDropzone(
+                                icon: ToolMeta.of(ToolType.watermark).icon,
+                                accent: ToolMeta.of(ToolType.watermark).color,
                                 onFileSelect: _selectPdfFile,
                                 allowMultiple: false,
                               ),

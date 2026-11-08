@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:syncfusion_flutter_pdf/pdf.dart' as sf_pdf;
 import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/file_dropzone.dart';
+import '../utils/tool_meta.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 import '../utils/file_utils.dart';
@@ -57,12 +58,10 @@ class _WordToPdfScreenState extends State<WordToPdfScreen> {
     text = text.replaceAll(RegExp(r'\{\\stylesheet[\s\S]*?\}'), '');
     text = text.replaceAll(RegExp(r'\{\\info[\s\S]*?\}'), '');
     // Decode \uN? Unicode escapes (N is a signed 16-bit value)
-    text = text.replaceAllMapped(
-        RegExp(r'\\u(-?\d+)\??'),
+    text = text.replaceAllMapped(RegExp(r'\\u(-?\d+)\??'),
         (m) => String.fromCharCode(int.parse(m.group(1)!) & 0xFFFF));
     // Decode \'hh hex escapes (Windows-1252 / Latin-1 compatible range)
-    text = text.replaceAllMapped(
-        RegExp(r"\\'([0-9a-fA-F]{2})"),
+    text = text.replaceAllMapped(RegExp(r"\\'([0-9a-fA-F]{2})"),
         (m) => String.fromCharCode(int.parse(m.group(1)!, radix: 16)));
     text = text.replaceAll(RegExp(r'\\par|\\line'), '\n');
     text = text.replaceAll(RegExp(r'\\tab'), '\t');
@@ -250,6 +249,8 @@ class _WordToPdfScreenState extends State<WordToPdfScreen> {
                 ),
               if (_pickedFile == null) ...[
                 FileDropzone(
+                  icon: ToolMeta.of(ToolType.wordToPdf).icon,
+                  accent: ToolMeta.of(ToolType.wordToPdf).color,
                   onFileSelect: _handleFileSelect,
                   fileTypeLabel: 'Text/RTF',
                   allowedExtensions: const ['txt', 'rtf'],

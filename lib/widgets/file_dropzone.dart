@@ -8,6 +8,8 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:pdf_toolkit/utils/ios_image_converter.dart';
 import 'package:pdf_toolkit/utils/platform_helper.dart';
 
+import 'package:pdf_toolkit/utils/tool_meta.dart';
+
 /// Unified file model for both web and mobile.
 /// On mobile: wraps dart:io File. On web: holds bytes + name.
 class PickedFile {
@@ -55,12 +57,23 @@ class FileDropzone extends StatefulWidget {
   final List<String>? allowedExtensions;
   final String? fileTypeLabel;
 
+  /// Operation icon shown above the hint text. Tools pass the same icon their
+  /// home card uses (see [ToolMeta]) so the screen keeps the visual identity
+  /// of the tile that opened it. Defaults to a neutral upload icon.
+  final IconData? icon;
+
+  /// Accent colour of the matching home card (pastel fill on Android,
+  /// accent on iOS). Colours the icon and its circular background.
+  final Color? accent;
+
   const FileDropzone({
     super.key,
     required this.onFileSelect,
     this.allowMultiple = false,
     this.allowedExtensions,
     this.fileTypeLabel,
+    this.icon,
+    this.accent,
   });
 
   static bool _isImageSelection(List<String>? extensions) {
@@ -220,6 +233,17 @@ class _FileDropzoneState extends State<FileDropzone> {
     final l10n = AppLocalizations.of(context)!;
     final fileType = widget.fileTypeLabel ?? 'PDF';
     const plural = '';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Operation icon + accent colour come from the tool metadata so the
+    // dropzone looks like the home card that opened this screen.
+    final IconData iconData = widget.icon ?? Icons.cloud_upload_outlined;
+    final Color accent =
+        widget.accent ?? (isDark ? Colors.grey[500]! : Colors.grey[400]!);
+    final Color iconCircle = accent.withValues(alpha: isDark ? 0.16 : 0.9);
+    final Color iconColor = isDark
+        ? accent
+        : Color.alphaBlend(Colors.black.withValues(alpha: 0.35), accent);
 
     return InkWell(
       onTap: _pickFiles,
@@ -237,10 +261,18 @@ class _FileDropzoneState extends State<FileDropzone> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.cloud_upload_outlined,
-              size: 44,
-              color: _isDragging ? const Color(0xFF22D3EE) : Colors.grey[500],
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: iconCircle,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                iconData,
+                size: 36,
+                color: iconColor,
+              ),
             ),
             const SizedBox(height: 10),
             Text(

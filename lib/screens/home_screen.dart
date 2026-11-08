@@ -738,7 +738,7 @@ class _IosHomeLayout extends StatelessWidget {
               crossAxisCount: 2,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 1.05,
+              childAspectRatio: 1.0,
             ),
             itemCount: tools.length,
             itemBuilder: (context, index) {
@@ -816,17 +816,17 @@ class _IosFeatureCard extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 42,
-                height: 42,
+                width: 52,
+                height: 52,
                 decoration: BoxDecoration(
                   color: isDark
                       ? accent.withValues(alpha: 0.16)
                       : Colors.white.withValues(alpha: 0.65),
-                  borderRadius: BorderRadius.circular(11),
+                  borderRadius: BorderRadius.circular(13),
                 ),
-                child: Icon(icon, size: 23, color: iconColor),
+                child: Icon(icon, size: 29, color: iconColor),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 13),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -924,15 +924,15 @@ class _IosToolTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 56,
+                height: 56,
                 decoration: BoxDecoration(
                   color: isDark
                       ? accent.withValues(alpha: 0.16)
                       : Colors.white.withValues(alpha: 0.62),
-                  borderRadius: BorderRadius.circular(11),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, size: 22, color: iconColor),
+                child: Icon(icon, size: 31, color: iconColor),
               ),
               const Spacer(),
               AutoFitText(
@@ -1031,13 +1031,13 @@ class _IosRow extends StatelessWidget {
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       leading: Container(
-        width: 36,
-        height: 36,
+        width: 44,
+        height: 44,
         decoration: BoxDecoration(
           color: isDark ? accent.withValues(alpha: 0.16) : pastel,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, size: 20, color: iconColor),
+        child: Icon(icon, size: 24, color: iconColor),
       ),
       title: Text(
         title,

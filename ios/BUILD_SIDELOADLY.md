@@ -163,6 +163,18 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
 - **Tüm PDF araçları iOS'ta çalışır:** birleştirme, bölme, sıkıştırma,
   döndürme, sayfa silme/sıralama, filigran, şifreleme/kaldırma, PDF → resim,
   PDF → metin/Word (RTF), resim → PDF, Word → PDF, not defteri ve okuyucu.
+- Araç ekranlarında **işlem ikonu artık ana ekrandaki kartla aynıdır**: dosya
+  seçim alanı, o aracın kart ikonunu ve kart rengini gösterir. **PDF Oku**
+  ekranı da aynı ikon stiline sahiptir.
+- Ana ekranda kart büyüklüğü ile ikon boyutu uyumludur; ikonlar kart dolduracak
+  kadar büyütüldü (ızgara kartları, tam genişlik kartlar ve liste satırları).
+- **Varsayılan/ listede görünen PDF uygulaması:** iOS `Info.plist`
+  `CFBundleDocumentTypes` içinde `com.adobe.pdf` görüntüleyici olarak
+  (`LSHandlerRank: Alternate`) tanımlıdır; Dosyalar, Mail vb. bir PDF'i
+  **Aç / Paylaş → PDF Toolkit** ile uygulama listesinde görünür ve okuyucu
+  ekranında açılır. Android'de `AndroidManifest.xml` `application/pdf`
+  için `ACTION_VIEW`/`ACTION_EDIT` filtrelerine sahiptir; Dosya yöneticisinde
+  **Her zaman / Hepsi bu** seçilirse varsayılan PDF okuyucu olur.
 - `Info.plist` izinleri: fotoğraf kitaplığı okuma (`NSPhotoLibraryUsageDescription`),
   fotoğraf kaydetme (`NSPhotoLibraryAddUsageDescription`) ve kamera
   (`NSCameraUsageDescription`) açıklamaları tanımlıdır. Dosya seçici ve

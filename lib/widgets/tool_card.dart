@@ -36,8 +36,10 @@ class ToolCard extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final double cardWidth = width ?? 150.0;
     final double cardHeight = height ?? 160.0;
-    // Scale icon and font proportionally to card size
-    final double iconSize = (cardWidth * 0.26).clamp(28.0, 48.0);
+    // Scale icon and font proportionally to card size. The icon circle is the
+    // visual anchor of the card, so it grows with the card instead of staying
+    // small inside a large tile.
+    final double iconSize = (cardWidth * 0.30).clamp(34.0, 54.0);
     final double titleFontSize = (cardWidth * 0.098).clamp(12.0, 16.0);
     final double descFontSize = (cardWidth * 0.074).clamp(9.5, 12.0);
 

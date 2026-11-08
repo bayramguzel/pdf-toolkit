@@ -10,6 +10,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/file_dropzone.dart';
+import '../utils/tool_meta.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 import '../utils/file_utils.dart';
@@ -425,6 +426,8 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
               ),
               const SizedBox(height: 24),
               FileDropzone(
+                icon: ToolMeta.of(ToolType.imageToPdf).icon,
+                accent: ToolMeta.of(ToolType.imageToPdf).color,
                 onFileSelect: _handleFileSelect,
                 allowMultiple: true,
                 allowedExtensions: ['jpg', 'jpeg', 'png', 'bmp', 'gif'],

@@ -9,6 +9,7 @@ import '../providers/app_state.dart';
 import '../providers/settings_provider.dart';
 import '../utils/file_utils.dart';
 import '../widgets/file_dropzone.dart';
+import '../utils/tool_meta.dart';
 import '../widgets/loading_spinner.dart';
 import '../widgets/operation_success_screen.dart';
 
@@ -100,8 +101,8 @@ class _PdfToTextScreenState extends State<PdfToTextScreen> {
         return;
       }
 
-      final originalName =
-          _pickedFile!.name.replaceAll(RegExp(r'\.pdf$', caseSensitive: false), '');
+      final originalName = _pickedFile!.name
+          .replaceAll(RegExp(r'\.pdf$', caseSensitive: false), '');
       final ext = _outputFormat == 'txt' ? 'txt' : 'rtf';
       final outFileName = '$originalName.$ext';
 
@@ -187,9 +188,8 @@ class _PdfToTextScreenState extends State<PdfToTextScreen> {
     final appState = Provider.of<AppState>(context, listen: false);
 
     if (_isProcessing) {
-      return Column(children: [
-        Expanded(child: LoadingSpinner(text: _statusText))
-      ]);
+      return Column(
+          children: [Expanded(child: LoadingSpinner(text: _statusText))]);
     }
 
     if (_exportedFile != null || _outputBytes != null) {
@@ -358,7 +358,10 @@ class _PdfToTextScreenState extends State<PdfToTextScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              FileDropzone(onFileSelect: _handleFileSelect),
+              FileDropzone(
+                  icon: ToolMeta.of(ToolType.pdfToWord).icon,
+                  accent: ToolMeta.of(ToolType.pdfToWord).color,
+                  onFileSelect: _handleFileSelect),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => appState.goHome(),
