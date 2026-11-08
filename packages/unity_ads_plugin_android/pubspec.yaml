@@ -1,0 +1,25 @@
+name: unity_ads_plugin
+description: "Unity Ads plugin for Flutter (Android-only fork). The iOS build of PDF Toolkit ships without any ads, so the iOS platform declaration and native sources were removed to keep UnityAds.framework out of the IPA."
+version: 0.4.0
+homepage: https://github.com/pavelzaichyk/flutter_unity_ads
+repository: https://github.com/pavelzaichyk/flutter_unity_ads
+
+environment:
+  sdk: '>=2.12.0 <4.0.0'
+  flutter: ">=1.20.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.rebeloid.unity_ads
+        pluginClass: UnityAdsPlugin

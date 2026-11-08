@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:pdf_toolkit/utils/file_utils.dart';
 import 'package:pdf_toolkit/utils/platform_helper.dart';
+import 'package:pdf_toolkit/widgets/file_dropzone.dart';
 import 'package:provider/provider.dart';
 import 'package:pdf_toolkit/providers/settings_provider.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -70,60 +71,41 @@ class _NotepadScreenState extends State<NotepadScreen> {
 
   Future<void> _insertImage() async {
     try {
-      FilePickerResult? result = await FilePicker.pickFiles(
-        type: FileType.image,
-        allowMultiple: false,
-        withData: kIsWeb,
-      );
+      PickedFile? picked;
+      // iOS: let the user pick from Photos as well as the Files app. Photos
+      // picks are re-encoded to JPEG by the image picker / native converter,
+      // which also handles HEIC.
+      if (PlatformHelper.isIOS) {
+        final photos = await FileDropzone.pickImagesWithSourceSheet(context);
+        if (photos != null) {
+          if (photos.isEmpty) return;
+          picked = photos.first;
+        }
+      }
 
-      if (result != null && result.files.isNotEmpty) {
+      if (picked == null) {
+        final result = await FilePicker.pickFiles(
+          type: FileType.image,
+          allowMultiple: false,
+          withData: kIsWeb,
+        );
+        if (result == null || result.files.isEmpty) return;
         final pickedFile = result.files.single;
-        final bytes = kIsWeb
-            ? pickedFile.bytes
-            : (pickedFile.path != null
-                ? await File(pickedFile.path!).readAsBytes()
-                : null);
-
-        if (bytes == null) return;
-
-        // Resize image if too large (fit within 600x400 box)
-        img.Image? image = img.decodeImage(bytes);
-        if (image != null) {
-          final scaleX = 600 / image.width;
-          final scaleY = 400 / image.height;
-          final scale = scaleX < scaleY ? scaleX : scaleY;
-          if (scale < 1.0) {
-            image = img.copyResize(
-              image,
-              width: (image.width * scale).round(),
-              interpolation: img.Interpolation.linear,
-            );
-          }
-
-          final resizedBytes = img.encodePng(image);
-          final base64String = base64Encode(resizedBytes);
-
-          final imageId = 'img_${_embeddedImages.length}';
-          _embeddedImages.add({
-            'id': imageId,
-            'base64': base64String,
-            'name': pickedFile.name,
-          });
-
-          final currentText = _textController.text;
-          final selection = _textController.selection;
-          final placeholder = '[IMAGE:$imageId]';
-          final newText = currentText.replaceRange(
-            selection.start,
-            selection.end,
-            placeholder,
+        if (kIsWeb) {
+          if (pickedFile.bytes == null) return;
+          picked = PickedFile.fromWeb(
+            name: pickedFile.name,
+            bytes: pickedFile.bytes!,
           );
-          _textController.text = newText;
-          _textController.selection = TextSelection.collapsed(
-            offset: selection.start + placeholder.length,
+        } else if (pickedFile.path != null) {
+          picked = await FileDropzone.normalizeImage(
+            PickedFile.fromMobile(File(pickedFile.path!)),
           );
         }
       }
+
+      if (picked == null) return;
+      _embedImage(await picked.readAsBytes(), picked.name);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -131,6 +113,53 @@ class _NotepadScreenState extends State<NotepadScreen> {
         );
       }
     }
+  }
+
+  void _embedImage(Uint8List bytes, String name) {
+    // Resize image if too large (fit within 600x400 box)
+    img.Image? image = img.decodeImage(bytes);
+    if (image == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Unsupported image format.')),
+        );
+      }
+      return;
+    }
+
+    final scaleX = 600 / image.width;
+    final scaleY = 400 / image.height;
+    final scale = scaleX < scaleY ? scaleX : scaleY;
+    if (scale < 1.0) {
+      image = img.copyResize(
+        image,
+        width: (image.width * scale).round(),
+        interpolation: img.Interpolation.linear,
+      );
+    }
+
+    final resizedBytes = img.encodePng(image);
+    final base64String = base64Encode(resizedBytes);
+
+    final imageId = 'img_${_embeddedImages.length}';
+    _embeddedImages.add({
+      'id': imageId,
+      'base64': base64String,
+      'name': name,
+    });
+
+    final currentText = _textController.text;
+    final selection = _textController.selection;
+    final placeholder = '[IMAGE:$imageId]';
+    final newText = currentText.replaceRange(
+      selection.start,
+      selection.end,
+      placeholder,
+    );
+    _textController.text = newText;
+    _textController.selection = TextSelection.collapsed(
+      offset: selection.start + placeholder.length,
+    );
   }
 
   void _insertEmoji() {

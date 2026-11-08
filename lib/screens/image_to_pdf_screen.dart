@@ -45,7 +45,9 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
             ext.endsWith('.jpeg') ||
             ext.endsWith('.png') ||
             ext.endsWith('.bmp') ||
-            ext.endsWith('.gif');
+            ext.endsWith('.gif') ||
+            ext.endsWith('.heic') ||
+            ext.endsWith('.heif');
       });
       _pickedImages.addAll(images);
       if (!kIsWeb) {
@@ -67,7 +69,7 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
 
       final result = await FilePicker.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'bmp', 'gif'],
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'bmp', 'gif', 'heic', 'heif'],
         allowMultiple: true,
         withData: kIsWeb,
       );
@@ -79,7 +81,10 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
               picked.add(PickedFile.fromWeb(name: pf.name, bytes: pf.bytes!));
             }
           } else if (pf.path != null) {
-            picked.add(PickedFile.fromMobile(File(pf.path!)));
+            final file = File(pf.path!);
+            picked.add(await FileDropzone.normalizeImage(
+              PickedFile.fromMobile(file),
+            ));
           }
         }
         _handleFileSelect(picked);

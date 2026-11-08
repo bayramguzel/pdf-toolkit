@@ -171,6 +171,22 @@ class FileUtils {
       return Directory('');
     }
 
+    // iOS apps can only write inside their own sandbox. A directory obtained
+    // from the system picker cannot be written to later without a security
+    // scoped bookmark, so always use the app Documents folder (visible in
+    // Files > On My iPhone > PDF Toolkit). This keeps every tool working.
+    if (Platform.isIOS) {
+      final directory = await getApplicationDocumentsDirectory();
+      try {
+        if (!await directory.exists()) {
+          await directory.create(recursive: true);
+        }
+      } catch (_) {
+        // The directory is created by the system; ignore if already present.
+      }
+      return directory;
+    }
+
     if (customDirectory != null && customDirectory.isNotEmpty) {
       final customDir = Directory(customDirectory);
       try {

@@ -114,6 +114,11 @@
 		<string>PDF Toolkit saves images you create to your photo library.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>PDF Toolkit can use the camera so you can capture a document and convert it to PDF.</string>
+		<!-- App Store: the app only uses standard iOS encryption. -->
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
+		<key>LSApplicationCategoryType</key>
+		<string>public.app-category.productivity</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>mailto</string>

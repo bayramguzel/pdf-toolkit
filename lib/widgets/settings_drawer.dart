@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -433,32 +433,33 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                       'https://play.google.com/store/apps/details?id=com.software41.pdftoolkit'),
                 ),
 
-              const Divider(),
-
-              // Donation Section
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  l10n.donate,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: settings.primaryColor,
+              // Donation Section (not shown on iOS: external payment links are
+              // not allowed inside App Store apps).
+              if (!PlatformHelper.isIOS) ...[
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    l10n.donate,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: settings.primaryColor,
+                    ),
                   ),
                 ),
-              ),
-
-              ListTile(
-                leading: const Icon(Icons.coffee_outlined),
-                title: Text(l10n.buyMeACoffee),
-                onTap: () =>
-                    _launchUrl(context, 'https://buymeacoffee.com/41software'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.paypal_outlined),
-                title: const Text('PayPal'),
-                onTap: () => _launchUrl(context, 'https://paypal.me/asbaypc'),
-              ),
+                ListTile(
+                  leading: const Icon(Icons.coffee_outlined),
+                  title: Text(l10n.buyMeACoffee),
+                  onTap: () => _launchUrl(
+                      context, 'https://buymeacoffee.com/41software'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.paypal_outlined),
+                  title: const Text('PayPal'),
+                  onTap: () => _launchUrl(context, 'https://paypal.me/asbaypc'),
+                ),
+              ],
 
               const SizedBox(height: 32),
             ],

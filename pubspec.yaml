@@ -1,7 +1,7 @@
 name: pdf_toolkit
 description: A comprehensive PDF toolkit application with advanced PDF manipulation features (merge, split, compress, protect) and a rich-text notepad for creating professional documents with images and styling.
 publish_to: 'none'
-version: 2.5.9+59
+version: 2.5.10+60
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
@@ -70,8 +70,9 @@ dependencies:
   js: ^0.7.1
   web: ^1.1.0
 
-  # Ad Monetization
-  unity_ads_plugin: ^0.4.0
+  # Ad Monetization (Android only: the iOS build ships without ad SDKs)
+  unity_ads_plugin:
+    path: packages/unity_ads_plugin_android
 
 dev_dependencies:
   flutter_test:

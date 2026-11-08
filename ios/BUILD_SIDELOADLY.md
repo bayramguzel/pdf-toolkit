@@ -132,11 +132,13 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
 
 ---
 
-## 6b. iOS'ta reklamlar ve PDF okuyucu
+## 6b. iOS'ta reklamlar, izinler ve tüm PDF araçları
 
-- iOS yapısında **Unity Ads/AdMob hiç başlatılmaz**. Reklam banner'ları,
-  ödüllü reklam yıldızı, VIP geri sayımı ve reklam kartları gösterilmez.
-  Android sürümünde reklamlar aynen çalışmaya devam eder.
+- iOS yapısında **Unity Ads/AdMob hiç başlatılmaz** ve IPA'ya hiçbir reklam
+  SDK'sı (UnityAds.framework / GoogleMobileAds) **dahil edilmez**. Reklam
+  banner'ları, ödüllü reklam yıldızı, VIP geri sayımı ve reklam kartları
+  gösterilmez. GitHub Actions derlemesi, IPA'da reklam SDK'sı bulursa hata
+  vererek durur. Android sürümünde reklamlar aynen çalışmaya devam eder.
 - iOS ana ekranı, gradyan banner/kart ızgarası yerine iOS'a yakışan düzeni
   kullanır. Üstte **Dosyalarım** kartı, hemen altında tek satırlık **PDF Oku**
   kartı (en çok kullanılan işlem), ardından **PDF Araçları** başlığı ve tüm
@@ -155,6 +157,28 @@ iOS uygulamaları sandbox içinde çalışır; Android'deki gibi ortak bir
   düğmeleri bulunur. Yakınlaştırma iki parmakla yapılır.
 - Dosyalar, Mail veya WhatsApp'tan **Aç → PDF Toolkit** ile gelen belge,
   uygulama zaten açık olsa bile okuyucuda anında yüklenir.
+
+## 6c. iOS izinleri ve araç uyumluluğu
+
+- **Tüm PDF araçları iOS'ta çalışır:** birleştirme, bölme, sıkıştırma,
+  döndürme, sayfa silme/sıralama, filigran, şifreleme/kaldırma, PDF → resim,
+  PDF → metin/Word (RTF), resim → PDF, Word → PDF, not defteri ve okuyucu.
+- `Info.plist` izinleri: fotoğraf kitaplığı okuma (`NSPhotoLibraryUsageDescription`),
+  fotoğraf kaydetme (`NSPhotoLibraryAddUsageDescription`) ve kamera
+  (`NSCameraUsageDescription`) açıklamaları tanımlıdır. Dosya seçici ve
+  **Dosyalar'a Kaydet** panelleri sistem tarafından sunulduğu için ek izin
+  istemez.
+- Dosyalar uygulamanın **Documents** klasörüne yazılır ve
+  `UIFileSharingEnabled` + `LSSupportsOpeningDocumentsInPlace` sayesinde
+  **Dosyalar → iPhone'um → PDF Toolkit** altında görünür. iOS'ta özel kayıt
+  klasörü seçimi yoktur; araçlar her zaman bu klasöre kaydeder.
+- iPhone fotoğrafları varsayılan olarak **HEIC/HEIF** olabilir. Uygulama bu
+  görselleri yerleşik iOS dönüştürücüsüyle JPEG'e çevirip resim → PDF ve not
+  defterinde kullanır; bozuk/okunamayan görsel hatası oluşmaz.
+- Açılışta eski logo kaldırıldı: yerel açılış ekranı yalnızca koyu arka plan
+  gösterir, ardından uygulama içi splash videosu başlar.
+- App Store politikaları için iOS'ta **bağış/Spenden (Buy Me a Coffee,
+  PayPal)** bölümü ve Google Play bağlantısı gizlenir.
 
 ---
 

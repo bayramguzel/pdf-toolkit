@@ -3,12 +3,85 @@ import UIKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
+  /// Keeps the image conversion channel alive for the app's lifetime.
+  private var imageConverterChannel: FlutterMethodChannel?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+    registerImageConverterChannel()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  /// Converts any image iOS can decode (HEIC/HEIF, JPEG, PNG, …) into a
+  /// baseline JPEG in the temporary directory. The Dart `image` package cannot
+  /// decode HEIC, which is the default photo format on iPhone, so image-to-PDF
+  /// and the notepad use this before embedding a picture.
+  private func registerImageConverterChannel() {
+    guard let controller = window?.rootViewController as? FlutterViewController else {
+      return
+    }
+    let channel = FlutterMethodChannel(
+      name: "com.software41.pdftoolkit/image_converter",
+      binaryMessenger: controller.binaryMessenger
+    )
+    channel.setMethodCallHandler { call, result in
+      guard call.method == "convertToJpeg" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      guard
+        let arguments = call.arguments as? [String: Any],
+        let sourcePath = arguments["path"] as? String
+      else {
+        result(FlutterError(code: "bad_arguments", message: "Missing path", details: nil))
+        return
+      }
+
+      DispatchQueue.global(qos: .userInitiated).async {
+        guard let image = UIImage(contentsOfFile: sourcePath) else {
+          DispatchQueue.main.async {
+            result(FlutterError(code: "decode_failed", message: "Unsupported image", details: nil))
+          }
+          return
+        }
+
+        // Bake EXIF orientation into the pixels so the JPEG opens upright
+        // everywhere (the Dart image decoder ignores orientation metadata).
+        let normalized: UIImage
+        if image.imageOrientation == .up {
+          normalized = image
+        } else {
+          UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
+          image.draw(in: CGRect(origin: .zero, size: image.size))
+          normalized = UIGraphicsGetImageFromCurrentImageContext() ?? image
+          UIGraphicsEndImageContext()
+        }
+
+        guard let data = normalized.jpegData(compressionQuality: 0.92) else {
+          DispatchQueue.main.async {
+            result(FlutterError(code: "encode_failed", message: "Could not encode JPEG", details: nil))
+          }
+          return
+        }
+
+        let destination = FileManager.default.temporaryDirectory
+          .appendingPathComponent("pdf_toolkit_\(UUID().uuidString).jpg")
+        do {
+          try data.write(to: destination, options: .atomic)
+          DispatchQueue.main.async {
+            result(destination.path)
+          }
+        } catch {
+          DispatchQueue.main.async {
+            result(FlutterError(code: "write_failed", message: error.localizedDescription, details: nil))
+          }
+        }
+      }
+    }
+    imageConverterChannel = channel
   }
 
   /// Handles "Open in PDF Toolkit" / "Copy to PDF Toolkit" from Files, Mail,

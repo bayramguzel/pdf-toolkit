@@ -55,6 +55,17 @@ jobs:
           path: PdfToolkit-unsigned.ipa
           if-no-files-found: error
 
+      - name: Verify the iOS build contains no ad SDKs
+        run: |
+          set -euo pipefail
+          FOUND=$(find Payload \( -iname '*UnityAds*' -o -iname '*GoogleMobileAds*' -o -iname '*AdMob*' \) -print)
+          if [ -n "$FOUND" ]; then
+            echo "Ad SDK found in the iOS build:"
+            echo "$FOUND"
+            exit 1
+          fi
+          echo "OK: no Unity Ads / AdMob frameworks in the iOS IPA."
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
