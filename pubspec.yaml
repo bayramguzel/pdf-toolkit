@@ -1,7 +1,7 @@
 name: pdf_toolkit
 description: A comprehensive PDF toolkit application with advanced PDF manipulation features (merge, split, compress, protect) and a rich-text notepad for creating professional documents with images and styling.
 publish_to: 'none'
-version: 2.5.10+60
+version: 2.5.11+61
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
@@ -60,7 +60,7 @@ dependencies:
   # Video player for splash screen
   video_player: ^2.9.2
 
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^2.0.0
   flutter_quill: ^11.5.0
   flutter_colorpicker: ^1.1.0
   flutter_quill_extensions: ^11.0.0
