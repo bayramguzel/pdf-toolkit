@@ -30,7 +30,15 @@ class AppLocalizationsTr extends AppLocalizations {
   String get mergePdf => 'PDF Birleştir';
 
   @override
+  String get mergeInstructions =>
+      'Dosyaları sıralamak için sürükleyip bırakın, ardından Birleştir\'e tıklayın.';
+
+  @override
   String get splitPdf => 'PDF Böl';
+
+  @override
+  String get splitInstructions =>
+      'Yeni bir PDF dosyasına ayıklamak istediğiniz sayfaları seçin.';
 
   @override
   String get compressPdf => 'PDF Sıkıştır';

@@ -73,6 +73,39 @@
       animation: spin 0.9s linear infinite;
     }
 
+    #file-protocol-warning {
+      display: none;
+      max-width: 520px;
+      margin: 20px;
+      padding: 24px;
+      background: #1F2937;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      color: #E5E7EB;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    #file-protocol-warning h2 {
+      margin-top: 0;
+      color: #F59E0B;
+      font-size: 20px;
+    }
+
+    #file-protocol-warning p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #9CA3AF;
+    }
+
+    #file-protocol-warning code {
+      background: #111827;
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: #38BDF8;
+      font-family: monospace;
+    }
+
     @keyframes pulse {
 
       0%,
@@ -96,14 +129,45 @@
 <body>
   <div id="loading">
     <img src="icons/Icon-192.png" alt="PDF Toolkit">
-    <div class="spinner"></div>
+    <div class="spinner" id="loading-spinner"></div>
     <div id="loading-text">PDF Toolkit yükleniyor...</div>
+
+    <div id="file-protocol-warning">
+      <h2>Web Sunucusu Gereklidir</h2>
+      <p>
+        Modern Flutter Web uygulamaları, tarayıcı güvenlik ilkeleri (CORS) nedeniyle doğrudan <code>file://</code> protokolü üzerinden dosya olarak açılamaz.
+      </p>
+      <p>
+        Uygulamayı yerel olarak çalıştırmak için proje klasöründeki <code>serve_web.bat</code> dosyasını çalıştırın veya terminalde <code>flutter run -d chrome</code> komutunu kullanın.
+      </p>
+    </div>
   </div>
 
   <script>
-    window.addEventListener('flutter-first-frame', function () {
-      document.getElementById('loading').remove();
-    });
+    if (window.location.protocol === 'file:') {
+      var spinner = document.getElementById('loading-spinner');
+      var loadingText = document.getElementById('loading-text');
+      var warning = document.getElementById('file-protocol-warning');
+      if (spinner) spinner.style.display = 'none';
+      if (loadingText) loadingText.style.display = 'none';
+      if (warning) warning.style.display = 'block';
+    } else {
+      window.addEventListener('flutter-first-frame', function () {
+        var loader = document.getElementById('loading');
+        if (loader) loader.remove();
+      });
+
+      // Timeout fallback if framework fails to load after 12 seconds
+      setTimeout(function () {
+        var loader = document.getElementById('loading');
+        if (loader) {
+          var loadingText = document.getElementById('loading-text');
+          if (loadingText) {
+            loadingText.innerHTML = 'Yükleme beklenenden uzun sürüyor...<br><small style="color:#6B7280;margin-top:8px;display:inline-block;">Sayfayı yenileyebilir veya sunucu bağlantınızı kontrol edebilirsiniz.</small>';
+          }
+        }
+      }, 12000);
+    }
   </script>
 
   <script src="flutter_bootstrap.js" async></script>

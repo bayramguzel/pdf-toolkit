@@ -263,10 +263,13 @@ class _PdfReorderScreenState extends State<PdfReorderScreen> {
                         ),
                       ),
                     )
-                  : Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
+                  : Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 800),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
                           child: Card(
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -377,33 +380,35 @@ class _PdfReorderScreenState extends State<PdfReorderScreen> {
                             },
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              FilledButton.icon(
-                                onPressed: _reorderPages,
-                                icon: const Icon(Icons.save),
-                                label: Text(l10n.saveReorderedPdf),
-                              ),
-                              const SizedBox(height: 8),
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _pdfFile = null;
-                                    _pickedFile = null;
-                                    _pdfDocument?.dispose();
-                                    _pdfDocument = null;
-                                    _pageOrder = [];
-                                  });
-                                },
-                                child: Text(l10n.selectDifferentFile),
-                              ),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                FilledButton.icon(
+                                  onPressed: _reorderPages,
+                                  icon: const Icon(Icons.save),
+                                  label: Text(l10n.saveReorderedPdf),
+                                ),
+                                const SizedBox(height: 8),
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _pdfFile = null;
+                                      _pickedFile = null;
+                                      _pdfDocument?.dispose();
+                                      _pdfDocument = null;
+                                      _pageOrder = [];
+                                    });
+                                  },
+                                  child: Text(l10n.selectDifferentFile),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+                  ),
         ),
       ],
     );

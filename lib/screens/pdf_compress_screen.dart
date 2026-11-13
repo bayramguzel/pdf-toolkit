@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:printing/printing.dart';
+import 'package:image/image.dart' as img;
 import 'package:provider/provider.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/app_state.dart';
@@ -86,34 +89,122 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
       final bytes = await _pickedFile!.readAsBytes();
       final originalSize = bytes.length;
       document = PdfDocument(inputBytes: bytes);
+      final pageCount = document.pages.count;
 
       setState(() {
         _statusText = l10n.applyingCompression;
       });
 
-      // Configure native Syncfusion stream compression
-      document.compressionLevel = _compressionLevel == 'best'
+      // Step 1: Structural rebuild into a fresh document to purge unused objects,
+      // invalid revisions and apply maximum native cross-reference deflate stream compression.
+      final cleanDoc = PdfDocument();
+      cleanDoc.compressionLevel = _compressionLevel == 'best'
           ? PdfCompressionLevel.best
-          : (_compressionLevel == 'normal'
-              ? PdfCompressionLevel.normal
-              : PdfCompressionLevel.none);
+          : PdfCompressionLevel.normal;
+      cleanDoc.fileStructure.incrementalUpdate = false;
+      cleanDoc.fileStructure.crossReferenceType =
+          PdfCrossReferenceType.crossReferenceStream;
+      cleanDoc.pageSettings.margins.all = 0;
 
-      document.fileStructure.incrementalUpdate = false;
-
-      if (_compressionLevel != 'none') {
-        document.fileStructure.crossReferenceType =
-            PdfCrossReferenceType.crossReferenceStream;
+      for (int i = 0; i < pageCount; i++) {
+        final sourcePage = document.pages[i];
+        final template = sourcePage.createTemplate();
+        cleanDoc.pageSettings.size = sourcePage.size;
+        cleanDoc.pageSettings.orientation =
+            sourcePage.size.width > sourcePage.size.height
+                ? PdfPageOrientation.landscape
+                : PdfPageOrientation.portrait;
+        final newPage = cleanDoc.pages.add();
+        newPage.graphics.drawPdfTemplate(
+          template,
+          Offset.zero,
+          sourcePage.size,
+        );
       }
 
-      setState(() {
-        _statusText = l10n.savingCompressedPdf;
-      });
+      List<int> compressedBytes = await cleanDoc.save();
+      cleanDoc.dispose();
 
-      final List<int> compressedBytes = await document.save();
+      // Step 2: If the structural rebuild didn't significantly reduce file size (less than 5% reduction),
+      // the PDF likely contains large uncompressed or high-res images / scanned pages.
+      // Re-encode pages using optimized raster JPEG compression to achieve real, substantial reduction.
+      if (compressedBytes.length >= (originalSize * 0.95)) {
+        try {
+          setState(() {
+            _statusText = l10n.compressingPdf;
+          });
+
+          final double targetDpi = _compressionLevel == 'best' ? 140.0 : 180.0;
+          final int jpegQuality = _compressionLevel == 'best' ? 65 : 78;
+
+          final rasterDoc = PdfDocument();
+          rasterDoc.compressionLevel = PdfCompressionLevel.best;
+          rasterDoc.fileStructure.incrementalUpdate = false;
+          rasterDoc.fileStructure.crossReferenceType =
+              PdfCrossReferenceType.crossReferenceStream;
+          rasterDoc.pageSettings.margins.all = 0;
+
+          bool rasterSuccess = true;
+          int pageIndex = 0;
+
+          await for (final page in Printing.raster(bytes, dpi: targetDpi)) {
+            if (!mounted) {
+              rasterSuccess = false;
+              break;
+            }
+            pageIndex++;
+            setState(() {
+              _statusText = '${l10n.applyingCompression} ($pageIndex/$pageCount)';
+            });
+
+            final rasterImage = await page.toImage();
+            final byteData = await rasterImage.toByteData(
+                format: ui.ImageByteFormat.rawRgba);
+            final width = rasterImage.width;
+            final height = rasterImage.height;
+            rasterImage.dispose();
+
+            if (byteData == null) {
+              rasterSuccess = false;
+              break;
+            }
+
+            final decoded = img.Image.fromBytes(
+              width: width,
+              height: height,
+              bytes: byteData.buffer,
+              order: img.ChannelOrder.rgba,
+            );
+            final jpgBytes = img.encodeJpg(decoded, quality: jpegQuality);
+
+            final newPage = rasterDoc.pages.add();
+            rasterDoc.pageSettings.size =
+                Size(page.width.toDouble(), page.height.toDouble());
+            final bitmap = PdfBitmap(jpgBytes);
+            newPage.graphics.drawImage(
+              bitmap,
+              Rect.fromLTWH(0, 0, newPage.size.width, newPage.size.height),
+            );
+          }
+
+          if (rasterSuccess && rasterDoc.pages.count > 0) {
+            final rasterBytes = await rasterDoc.save();
+            // Only adopt rasterized version if it is genuinely smaller
+            if (rasterBytes.length < compressedBytes.length &&
+                rasterBytes.length < originalSize) {
+              compressedBytes = rasterBytes;
+            }
+          }
+          rasterDoc.dispose();
+        } catch (_) {
+          // If rasterization encounters any error, smoothly fall back to compressedBytes
+        }
+      }
+
       document.dispose();
       document = null;
 
-      // Select the smaller of the two streams (never enlarge the file)
+      // Select the smaller of the streams (never enlarge the file)
       List<int> finalBytes = compressedBytes;
       if (finalBytes.length > originalSize) {
         finalBytes = bytes;
@@ -221,32 +312,35 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
         children: [
           Expanded(
             child: Center(
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const ToolPageBadge(tool: ToolType.compressor),
-                    const SizedBox(height: 16),
-                    Text(
-                      l10n.compressPdf,
-                      style: const TextStyle(
-                          fontSize: 32, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.reduceSize,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.grey[400]
-                            : Colors.grey[700],
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const ToolPageBadge(tool: ToolType.compressor),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.compressPdf,
+                        style: const TextStyle(
+                            fontSize: 32, fontWeight: FontWeight.bold),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    FileDropzone(onFileSelect: _handleFileSelect),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.reduceSize,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey[400]
+                              : Colors.grey[700],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      FileDropzone(onFileSelect: _handleFileSelect),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -259,18 +353,24 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
       Expanded(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
             child: Column(
               children: [
-                const Text(
-                  'Compress PDF',
+                Text(
+                  l10n.compressPdf,
                   style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Adjust the compression level, then click Compress.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                  l10n.compressInstructions,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[400]
+                        : Colors.grey[700],
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
@@ -304,7 +404,7 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${_pdfDocument?.pages.count ?? 0} pages',
+                          l10n.pagesCount(_pdfDocument?.pages.count ?? 0),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[400],
@@ -383,24 +483,6 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
                                 ),
                               ),
                             ),
-                            DropdownMenuItem(
-                              value: 'none',
-                              child: SizedBox(
-                                height: 60,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(l10n.noCompressionTitle,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    const SizedBox(height: 4),
-                                    Text(l10n.preserveOriginalQuality,
-                                        style: const TextStyle(fontSize: 12)),
-                                  ],
-                                ),
-                              ),
-                            ),
                           ],
                           onChanged: (value) {
                             if (value != null) {
@@ -432,11 +514,11 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text('â€¢ ${l10n.tip1}',
+                              Text('• ${l10n.tip1}',
                                   style: const TextStyle(fontSize: 12)),
-                              Text('â€¢ ${l10n.tip2}',
+                              Text('• ${l10n.tip2}',
                                   style: const TextStyle(fontSize: 12)),
-                              Text('â€¢ ${l10n.tip3}',
+                              Text('• ${l10n.tip3}',
                                   style: const TextStyle(fontSize: 12)),
                             ],
                           ),
@@ -445,7 +527,6 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
@@ -462,6 +543,7 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
                 ),
               ],
             ),
+          ),
           ),
         ),
       )

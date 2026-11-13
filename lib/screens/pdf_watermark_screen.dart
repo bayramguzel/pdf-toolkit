@@ -300,9 +300,12 @@ class _PdfWatermarkScreenState extends State<PdfWatermarkScreen> {
                     )
                   : SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 800),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                           Card(
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -556,6 +559,8 @@ class _PdfWatermarkScreenState extends State<PdfWatermarkScreen> {
                         ],
                       ),
                     ),
+                  ),
+                ),
         ),
       ],
     );

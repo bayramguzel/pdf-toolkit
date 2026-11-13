@@ -142,11 +142,23 @@ abstract class AppLocalizations {
   /// **'Merge PDFs'**
   String get mergePdf;
 
+  /// Instruction for merging PDFs
+  ///
+  /// In en, this message translates to:
+  /// **'Drag and drop to reorder the files, then click Merge.'**
+  String get mergeInstructions;
+
   /// Split PDF tool
   ///
   /// In en, this message translates to:
   /// **'Split PDF'**
   String get splitPdf;
+
+  /// Instruction for splitting PDFs
+  ///
+  /// In en, this message translates to:
+  /// **'Select the pages you want to extract into a new PDF file.'**
+  String get splitInstructions;
 
   /// Title for compress PDF screen
   ///

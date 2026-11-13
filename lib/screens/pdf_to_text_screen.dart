@@ -212,24 +212,34 @@ class _PdfToTextScreenState extends State<PdfToTextScreen> {
     }
 
     if (_pickedFile == null) {
+      final l10n = AppLocalizations.of(context)!;
       return Column(children: [
         Expanded(
-            child: Center(
-                child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Extract to TXT/RTF',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Extract all text from your PDF into TXT or RTF format.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[400]),
-                textAlign: TextAlign.center,
-              ),
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const ToolPageBadge(tool: ToolType.pdfToWord),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.pdfToText,
+                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.toRtfTxt,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[400]
+                            : Colors.grey[700],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
               const SizedBox(height: 24),
               if (_error != null)
                 Container(
@@ -364,12 +374,15 @@ class _PdfToTextScreenState extends State<PdfToTextScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[700],
                 ),
-                child: const Text('Cancel'),
+                child: Text(l10n.cancel),
               ),
             ],
           ),
-        )))
-      ]);
+        ),
+      ),
+    ),
+  ),
+]);
     }
 
     return Column(children: [

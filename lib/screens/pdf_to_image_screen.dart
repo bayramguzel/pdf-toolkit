@@ -235,7 +235,7 @@ class _PdfToImageScreenState extends State<PdfToImageScreen> {
       return Column(children: [
         Expanded(
             child: Center(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
@@ -301,8 +301,9 @@ class _PdfToImageScreenState extends State<PdfToImageScreen> {
               ),
             ),
           ),
-        ))
-      ]);
+        ),
+      ),
+    ]);
     }
 
     return Column(children: [

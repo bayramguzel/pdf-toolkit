@@ -234,32 +234,35 @@ class _PdfSplitScreenState extends State<PdfSplitScreen> {
         children: [
           Expanded(
             child: Center(
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const ToolPageBadge(tool: ToolType.splitter),
-                    const SizedBox(height: 16),
-                    Text(
-                      l10n.splitPdf,
-                      style: const TextStyle(
-                          fontSize: 32, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.extractPages,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.grey[400]
-                            : Colors.grey[700],
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const ToolPageBadge(tool: ToolType.splitter),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.splitPdf,
+                        style: const TextStyle(
+                            fontSize: 32, fontWeight: FontWeight.bold),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    FileDropzone(onFileSelect: _handleFileSelect),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.extractPages,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey[400]
+                              : Colors.grey[700],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      FileDropzone(onFileSelect: _handleFileSelect),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -284,8 +287,13 @@ class _PdfSplitScreenState extends State<PdfSplitScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Select the pages you want to extract into a new PDF file.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                  l10n.splitInstructions,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[400]
+                        : Colors.grey[700],
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),

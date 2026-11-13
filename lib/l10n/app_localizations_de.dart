@@ -30,7 +30,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mergePdf => 'PDFs Zusammenführen';
 
   @override
+  String get mergeInstructions =>
+      'Ziehen Sie die Dateien zum Neuordnen und klicken Sie dann auf Zusammenführen.';
+
+  @override
   String get splitPdf => 'PDF Teilen';
+
+  @override
+  String get splitInstructions =>
+      'Wählen Sie die Seiten aus, die Sie in eine neue PDF-Datei extrahieren möchten.';
 
   @override
   String get compressPdf => 'PDF komprimieren';

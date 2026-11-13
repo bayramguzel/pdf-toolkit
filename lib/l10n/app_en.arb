@@ -28,9 +28,17 @@
   "@mergePdf": {
     "description": "Merge PDF tool"
   },
+  "mergeInstructions": "Drag and drop to reorder the files, then click Merge.",
+  "@mergeInstructions": {
+    "description": "Instruction for merging PDFs"
+  },
   "splitPdf": "Split PDF",
   "@splitPdf": {
     "description": "Split PDF tool"
+  },
+  "splitInstructions": "Select the pages you want to extract into a new PDF file.",
+  "@splitInstructions": {
+    "description": "Instruction for splitting PDFs"
   },
   "compressPdf": "Compress PDF",
   "@compressPdf": {

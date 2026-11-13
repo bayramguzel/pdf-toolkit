@@ -30,7 +30,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergePdf => 'Merge PDFs';
 
   @override
+  String get mergeInstructions =>
+      'Drag and drop to reorder the files, then click Merge.';
+
+  @override
   String get splitPdf => 'Split PDF';
+
+  @override
+  String get splitInstructions =>
+      'Select the pages you want to extract into a new PDF file.';
 
   @override
   String get compressPdf => 'Compress PDF';

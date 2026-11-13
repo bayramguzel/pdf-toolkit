@@ -188,43 +188,49 @@ class _PdfRemovePagesScreenState extends State<PdfRemovePagesScreen> {
               ? LoadingSpinner(text: _statusText)
               : _pickedFile == null
                   ? Center(
-                      child: Padding(
+                      child: SingleChildScrollView(
                         padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const ToolPageBadge(tool: ToolType.removePages),
-                            const SizedBox(height: 16),
-                            Text(
-                              l10n.removePdf,
-                              style: const TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              l10n.deletePages,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.grey[400]
-                                      : Colors.grey[600]),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 24),
-                            FileDropzone(
-                              onFileSelect: _selectPdfFile,
-                              allowMultiple: false,
-                            ),
-                          ],
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 600),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const ToolPageBadge(tool: ToolType.removePages),
+                              const SizedBox(height: 16),
+                              Text(
+                                l10n.removePdf,
+                                style: const TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.deletePages,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600]),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 24),
+                              FileDropzone(
+                                onFileSelect: _selectPdfFile,
+                                allowMultiple: false,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     )
                   : SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 1000),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                           Card(
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -427,6 +433,8 @@ class _PdfRemovePagesScreenState extends State<PdfRemovePagesScreen> {
                         ],
                       ),
                     ),
+                  ),
+                ),
         ),
       ],
     );

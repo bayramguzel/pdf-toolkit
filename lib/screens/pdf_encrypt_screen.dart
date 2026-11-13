@@ -168,45 +168,50 @@ class _PdfEncryptScreenState extends State<PdfEncryptScreen> {
     if (_pickedFile == null) {
       return Column(children: [
         Expanded(
-            child: Center(
-                child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const ToolPageBadge(tool: ToolType.encryptor),
-              const SizedBox(height: 16),
-              Text(
-                l10n.encryptPdf,
-                style:
-                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const ToolPageBadge(tool: ToolType.encryptor),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.encryptPdf,
+                      style:
+                          const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.addPassword,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey[400]
+                              : Colors.grey[600]),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    FileDropzone(onFileSelect: _handleFileSelect),
+                  ],
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.addPassword,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.grey[400]
-                        : Colors.grey[600]),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              FileDropzone(onFileSelect: _handleFileSelect),
-            ],
+            ),
           ),
-        )))
+        ),
       ]);
     }
 
     return Column(children: [
       Expanded(
-          child: Center(
-              child: SingleChildScrollView(
+          child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Column(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Column(
             children: [
               Text(
                 l10n.encryptPdf,
@@ -216,7 +221,9 @@ class _PdfEncryptScreenState extends State<PdfEncryptScreen> {
               const SizedBox(height: 8),
               Text(
                 l10n.setPasswordDescription,
-                style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey[400]
+                    : Colors.grey[700]),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -332,7 +339,9 @@ class _PdfEncryptScreenState extends State<PdfEncryptScreen> {
             ],
           ),
         ),
-      )))
-    ]);
-  }
+        ),
+      ),
+    ),
+  ]);
+}
 }

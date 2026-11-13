@@ -399,40 +399,45 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
     if (_pickedImages.isEmpty) {
       return Column(children: [
         Expanded(
-            child: Center(
-                child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const ToolPageBadge(tool: ToolType.imageToPdf),
-              const SizedBox(height: 16),
-              Text(
-                l10n.imageToPdf,
-                style:
-                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.convert,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.grey[400]
-                      : Colors.grey[600],
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const ToolPageBadge(tool: ToolType.imageToPdf),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.imageToPdf,
+                      style:
+                          const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.convert,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[400]
+                            : Colors.grey[600],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    FileDropzone(
+                      onFileSelect: _handleFileSelect,
+                      allowMultiple: true,
+                      allowedExtensions: ['jpg', 'jpeg', 'png', 'bmp', 'gif'],
+                      fileTypeLabel: 'Image',
+                    ),
+                  ],
                 ),
-                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
-              FileDropzone(
-                onFileSelect: _handleFileSelect,
-                allowMultiple: true,
-                allowedExtensions: ['jpg', 'jpeg', 'png', 'bmp', 'gif'],
-                fileTypeLabel: 'Image',
-              ),
-            ],
+            ),
           ),
-        )))
+        )
       ]);
     }
 
@@ -440,9 +445,10 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
       Expanded(
           child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Column(
             children: [
               Text(
                 l10n.imageToPdf,
@@ -747,6 +753,7 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
               ),
             ],
           ),
+        ),
         ),
       ))
     ]);
