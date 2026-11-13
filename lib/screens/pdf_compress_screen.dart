@@ -111,13 +111,10 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
       for (int i = 0; i < document.pages.count; i++) {
         final origPage = document.pages[i];
         final template = origPage.createTemplate();
-        final section = templateDoc.sections.add();
-        section.pageSettings.size = origPage.size;
-        section.pageSettings.margins.all = 0;
-        final newPage = section.pages.add();
+        final newPage = templateDoc.pages.add();
         newPage.graphics.drawPdfTemplate(
           template,
-          const Offset(0, 0),
+          Offset.zero,
           origPage.size,
         );
       }
@@ -151,7 +148,7 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
             });
 
             final raster =
-                await Printing.raster(bytes, pages: [i], dpi: targetDpi).first;
+                await Printing.raster(bytes, pages: [i], dpi: targetDpi.toDouble()).first;
             final pngBytes = await raster.toPng();
             final decoded = img.decodeImage(pngBytes);
             if (decoded != null) {
@@ -159,10 +156,7 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
               final pdfImage = PdfBitmap(jpgBytes);
 
               final origPage = document.pages[i];
-              final section = rasterDoc.sections.add();
-              section.pageSettings.size = origPage.size;
-              section.pageSettings.margins.all = 0;
-              final newPage = section.pages.add();
+              final newPage = rasterDoc.pages.add();
               newPage.graphics.drawImage(
                 pdfImage,
                 Rect.fromLTWH(0, 0, origPage.size.width, origPage.size.height),

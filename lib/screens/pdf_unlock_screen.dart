@@ -121,13 +121,10 @@ class _PdfUnlockScreenState extends State<PdfUnlockScreen> {
         for (int i = 0; i < document.pages.count; i++) {
           final page = document.pages[i];
           final template = page.createTemplate();
-          final section = cleanDoc.sections.add();
-          section.pageSettings.size = page.size;
-          section.pageSettings.margins.all = 0;
-          final newPage = section.pages.add();
+          final newPage = cleanDoc.pages.add();
           newPage.graphics.drawPdfTemplate(
             template,
-            const Offset(0, 0),
+            Offset.zero,
             page.size,
           );
         }
