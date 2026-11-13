@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf_pdf;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
@@ -17,8 +18,15 @@ import '../utils/web_download_stub.dart'
 
 class PdfReaderScreen extends StatefulWidget {
   final File? initialFile;
+  final Uint8List? initialBytes;
+  final String? initialFileName;
 
-  const PdfReaderScreen({super.key, this.initialFile});
+  const PdfReaderScreen({
+    super.key,
+    this.initialFile,
+    this.initialBytes,
+    this.initialFileName,
+  });
 
   @override
   State<PdfReaderScreen> createState() => _PdfReaderScreenState();
@@ -37,11 +45,19 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
   int _currentPage = 1;
   int _totalPages = 0;
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _isEncrypted = false;
+  String? _password;
+  String? _passwordError;
 
   @override
   void initState() {
     super.initState();
-    if (!kIsWeb && widget.initialFile != null) {
+    if (kIsWeb && widget.initialBytes != null) {
+      _loadPdfBytes(
+          widget.initialBytes!, widget.initialFileName ?? 'document.pdf');
+    } else if (!kIsWeb && widget.initialFile != null) {
       _loadPdf(widget.initialFile!);
     }
   }
@@ -55,17 +71,47 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
         widget.initialFile != null &&
         widget.initialFile!.path != oldWidget.initialFile?.path) {
       _loadPdf(widget.initialFile!);
+    } else if (kIsWeb &&
+        widget.initialBytes != null &&
+        widget.initialBytes != oldWidget.initialBytes) {
+      _loadPdfBytes(
+          widget.initialBytes!, widget.initialFileName ?? 'document.pdf');
     }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _passwordController.dispose();
     _pdfViewerController.dispose();
     super.dispose();
   }
 
-  void _loadPdf(File file) {
+  void _checkEncryption(Uint8List bytes) {
+    bool isEncrypted = false;
+    sf_pdf.PdfDocument? testDoc;
+    try {
+      testDoc = sf_pdf.PdfDocument(inputBytes: bytes);
+    } catch (_) {
+      isEncrypted = true;
+    } finally {
+      testDoc?.dispose();
+    }
+
+    if (isEncrypted) {
+      if (mounted) {
+        setState(() {
+          _isEncrypted = true;
+          _isLoading = false;
+          _documentLoaded = false;
+          _passwordController.clear();
+          _passwordError = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadPdf(File file) async {
     if (!file.existsSync()) {
       setState(() {
         _isLoading = false;
@@ -74,6 +120,8 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
         _pdfBytes = null;
         _pdfFileName = null;
         _error = null;
+        _isEncrypted = false;
+        _password = null;
       });
       // Show the picker screen again instead of a dead-end error.
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -92,10 +140,19 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
       _documentLoaded = false;
       _error = null;
       _pdfFile = file;
+      _pdfBytes = null;
       _pdfFileName = file.path.split(RegExp(r'[\\/]')).last;
       _currentPage = 1;
       _totalPages = 0;
+      _password = null;
+      _passwordError = null;
+      _isEncrypted = false;
     });
+
+    try {
+      final bytes = await file.readAsBytes();
+      _checkEncryption(bytes);
+    } catch (_) {}
   }
 
   void _loadPdfBytes(Uint8List bytes, String name) {
@@ -103,11 +160,17 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
       _isLoading = true;
       _documentLoaded = false;
       _error = null;
+      _pdfFile = null;
       _pdfBytes = bytes;
       _pdfFileName = name;
       _currentPage = 1;
       _totalPages = 0;
+      _password = null;
+      _passwordError = null;
+      _isEncrypted = false;
     });
+
+    _checkEncryption(bytes);
   }
 
   void _resetFile() {
@@ -118,11 +181,188 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
       _documentLoaded = false;
       _isLoading = false;
       _error = null;
+      _isEncrypted = false;
+      _password = null;
+      _passwordError = null;
+      _passwordController.clear();
       _currentPage = 1;
       _totalPages = 0;
       _isSearchVisible = false;
       _searchController.clear();
     });
+  }
+
+  Future<void> _validateAndApplyPassword() async {
+    final entered = _passwordController.text;
+    final l10n = AppLocalizations.of(context)!;
+    if (entered.isEmpty) {
+      setState(() {
+        _passwordError = l10n.enterPdfPassword;
+      });
+      return;
+    }
+
+    Uint8List? bytes = _pdfBytes;
+    if (bytes == null && _pdfFile != null) {
+      try {
+        bytes = await _pdfFile!.readAsBytes();
+      } catch (e) {
+        setState(() {
+          _passwordError = 'Could not read file: $e';
+        });
+        return;
+      }
+    }
+
+    if (bytes == null) return;
+
+    sf_pdf.PdfDocument? testDoc;
+    try {
+      testDoc = sf_pdf.PdfDocument(inputBytes: bytes, password: entered);
+    } catch (_) {
+      setState(() {
+        _passwordError = l10n.invalidPassword;
+      });
+      return;
+    } finally {
+      testDoc?.dispose();
+    }
+
+    setState(() {
+      _password = entered;
+      _passwordError = null;
+      _isEncrypted = false;
+      _isLoading = true;
+      _documentLoaded = false;
+    });
+  }
+
+  Widget _buildPasswordEntryView() {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 76,
+                height: 76,
+                decoration: BoxDecoration(
+                  color: Colors.amber.withAlpha((0.15 * 255).round()),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.lock_rounded,
+                  size: 40,
+                  color: Colors.amber,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                l10n.enterPdfPassword,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _pdfFileName ?? 'document.pdf',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 24),
+              if (_passwordError != null)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withAlpha((0.1 * 255).round()),
+                    border: Border.all(
+                        color: Colors.red.withAlpha((0.4 * 255).round())),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.error_outline_rounded,
+                          color: Colors.red, size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          _passwordError!,
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                autofocus: true,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _validateAndApplyPassword(),
+                decoration: InputDecoration(
+                  hintText: l10n.password,
+                  prefixIcon: const Icon(Icons.vpn_key_rounded),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _validateAndApplyPassword,
+                  icon: const Icon(Icons.lock_open_rounded),
+                  label: Text(l10n.ok),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextButton.icon(
+                onPressed: _resetFile,
+                icon: const Icon(Icons.folder_open_rounded),
+                label: Text(l10n.cancel),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _downloadPdf() async {
@@ -322,6 +562,10 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
       );
     }
 
+    if (_isEncrypted && _password == null) {
+      return _buildPasswordEntryView();
+    }
+
     return Column(
       children: [
         // Toolbar
@@ -473,6 +717,8 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                 SfPdfViewer.memory(
                   _pdfBytes!,
                   controller: _pdfViewerController,
+                  password: _password,
+                  canShowPasswordDialog: false,
                   initialZoomLevel: _zoomLevel,
                   pageLayoutMode: PdfPageLayoutMode.single,
                   scrollDirection: PdfScrollDirection.vertical,
@@ -494,19 +740,34 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                     }
                   },
                   onDocumentLoadFailed: (details) {
-                    if (mounted) {
+                    if (!mounted) return;
+                    final err = details.error.toLowerCase();
+                    final desc = details.description.toLowerCase();
+                    if (err.contains('password') ||
+                        desc.contains('password') ||
+                        err.contains('encrypt') ||
+                        desc.contains('encrypt')) {
                       setState(() {
                         _isLoading = false;
-                        _documentLoaded = false;
-                        _error = l10n.errorLoadingPdf(details.error);
+                        _isEncrypted = true;
+                        _password = null;
+                        _passwordError = l10n.invalidPassword;
                       });
+                      return;
                     }
+                    setState(() {
+                      _isLoading = false;
+                      _documentLoaded = false;
+                      _error = l10n.errorLoadingPdf(details.error);
+                    });
                   },
                 )
               else
                 SfPdfViewer.file(
                   _pdfFile!,
                   controller: _pdfViewerController,
+                  password: _password,
+                  canShowPasswordDialog: false,
                   initialZoomLevel: _zoomLevel,
                   pageLayoutMode: PdfPageLayoutMode.single,
                   scrollDirection: PdfScrollDirection.vertical,
@@ -528,13 +789,26 @@ class _PdfReaderScreenState extends State<PdfReaderScreen> {
                     }
                   },
                   onDocumentLoadFailed: (details) {
-                    if (mounted) {
+                    if (!mounted) return;
+                    final err = details.error.toLowerCase();
+                    final desc = details.description.toLowerCase();
+                    if (err.contains('password') ||
+                        desc.contains('password') ||
+                        err.contains('encrypt') ||
+                        desc.contains('encrypt')) {
                       setState(() {
                         _isLoading = false;
-                        _documentLoaded = false;
-                        _error = l10n.errorLoadingPdf(details.error);
+                        _isEncrypted = true;
+                        _password = null;
+                        _passwordError = l10n.invalidPassword;
                       });
+                      return;
                     }
+                    setState(() {
+                      _isLoading = false;
+                      _documentLoaded = false;
+                      _error = l10n.errorLoadingPdf(details.error);
+                    });
                   },
                 ),
               if (_isLoading)

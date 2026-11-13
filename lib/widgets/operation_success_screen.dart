@@ -8,6 +8,7 @@ import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import 'package:pdf_toolkit/utils/file_utils.dart';
 import 'package:pdf_toolkit/utils/platform_helper.dart';
 import 'package:pdf_toolkit/providers/settings_provider.dart';
+import 'package:pdf_toolkit/screens/pdf_reader_screen.dart';
 import 'package:provider/provider.dart';
 
 class OperationSuccessScreen extends StatelessWidget {
@@ -157,7 +158,11 @@ class OperationSuccessScreen extends StatelessWidget {
               ),
             ],
           ),
-          body: kIsWeb ? SfPdfViewer.memory(bytes!) : SfPdfViewer.file(file!),
+          body: PdfReaderScreen(
+            initialFile: file,
+            initialBytes: bytes,
+            initialFileName: _displayName,
+          ),
         ),
       ),
     );
