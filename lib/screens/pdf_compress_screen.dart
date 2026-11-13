@@ -3,8 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:printing/printing.dart';
-import 'package:image/image.dart' as img;
 import 'package:provider/provider.dart';
 import 'package:pdf_toolkit/l10n/app_localizations.dart';
 import '../providers/app_state.dart';
@@ -85,7 +83,6 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
 
     PdfDocument? document;
     try {
-      // Read the original PDF
       final bytes = await _pickedFile!.readAsBytes();
       final originalSize = bytes.length;
       document = PdfDocument(inputBytes: bytes);
@@ -94,92 +91,30 @@ class _PdfCompressScreenState extends State<PdfCompressScreen> {
         _statusText = l10n.applyingCompression;
       });
 
-      // 1. First attempt: Clean template rebuild (strips unused objects, metadata, revision history)
-      final templateDoc = PdfDocument();
-      templateDoc.compressionLevel = _compressionLevel == 'best'
+      // Configure native Syncfusion stream compression
+      document.compressionLevel = _compressionLevel == 'best'
           ? PdfCompressionLevel.best
           : (_compressionLevel == 'normal'
               ? PdfCompressionLevel.normal
               : PdfCompressionLevel.none);
 
-      templateDoc.fileStructure.incrementalUpdate = false;
+      document.fileStructure.incrementalUpdate = false;
+
       if (_compressionLevel != 'none') {
-        templateDoc.fileStructure.crossReferenceType =
+        document.fileStructure.crossReferenceType =
             PdfCrossReferenceType.crossReferenceStream;
       }
 
-      for (int i = 0; i < document.pages.count; i++) {
-        final origPage = document.pages[i];
-        final template = origPage.createTemplate();
-        final newPage = templateDoc.pages.add();
-        newPage.graphics.drawPdfTemplate(
-          template,
-          Offset.zero,
-          origPage.size,
-        );
-      }
+      setState(() {
+        _statusText = l10n.savingCompressedPdf;
+      });
 
-      List<int> candidateBytes = await templateDoc.save();
-      templateDoc.dispose();
-
-      // 2. Second attempt: Raster-based image compression for image-heavy/bloated PDFs
-      // If template rebuild didn't achieve significant reduction (>= 90% of original),
-      // and user selected best or normal compression, re-encode pages at optimized resolution/quality.
-      if (_compressionLevel != 'none' &&
-          candidateBytes.length >= (originalSize * 0.90).round()) {
-        try {
-          final int targetDpi = _compressionLevel == 'best' ? 120 : 150;
-          final int jpegQuality = _compressionLevel == 'best' ? 65 : 75;
-
-          final rasterDoc = PdfDocument();
-          rasterDoc.compressionLevel = PdfCompressionLevel.best;
-          rasterDoc.fileStructure.incrementalUpdate = false;
-          rasterDoc.fileStructure.crossReferenceType =
-              PdfCrossReferenceType.crossReferenceStream;
-
-          final totalPages = document.pages.count;
-          for (int i = 0; i < totalPages; i++) {
-            if (!mounted) {
-              rasterDoc.dispose();
-              return;
-            }
-            setState(() {
-              _statusText = l10n.convertingPage(i + 1, totalPages);
-            });
-
-            final raster =
-                await Printing.raster(bytes, pages: [i], dpi: targetDpi.toDouble()).first;
-            final pngBytes = await raster.toPng();
-            final decoded = img.decodeImage(pngBytes);
-            if (decoded != null) {
-              final jpgBytes = img.encodeJpg(decoded, quality: jpegQuality);
-              final pdfImage = PdfBitmap(jpgBytes);
-
-              final origPage = document.pages[i];
-              final newPage = rasterDoc.pages.add();
-              newPage.graphics.drawImage(
-                pdfImage,
-                Rect.fromLTWH(0, 0, origPage.size.width, origPage.size.height),
-              );
-            }
-          }
-
-          final List<int> rasterBytes = await rasterDoc.save();
-          rasterDoc.dispose();
-
-          if (rasterBytes.length < candidateBytes.length) {
-            candidateBytes = rasterBytes;
-          }
-        } catch (e) {
-          debugPrint('Raster compression fallback: $e');
-        }
-      }
-
+      final List<int> compressedBytes = await document.save();
       document.dispose();
       document = null;
 
-      // Select the smallest valid byte stream (never produce a file larger than the original)
-      List<int> finalBytes = candidateBytes;
+      // Select the smaller of the two streams (never enlarge the file)
+      List<int> finalBytes = compressedBytes;
       if (finalBytes.length > originalSize) {
         finalBytes = bytes;
       }
