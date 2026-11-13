@@ -1,7 +1,7 @@
 name: pdf_toolkit
 description: A comprehensive PDF toolkit application with advanced PDF manipulation features (merge, split, compress, protect) and a rich-text notepad for creating professional documents with images and styling.
 publish_to: 'none'
-version: 2.5.12+62
+version: 2.5.13+63
 
 environment:
   sdk: ">=3.5.0 <4.0.0"

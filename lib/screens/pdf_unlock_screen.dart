@@ -93,7 +93,49 @@ class _PdfUnlockScreenState extends State<PdfUnlockScreen> {
         return;
       }
 
-      final List<int> outBytes = await document.save();
+      // 1. Clear passwords and permissions from the document
+      document.security.userPassword = '';
+      document.security.ownerPassword = '';
+      try {
+        document.security.permissions.clear();
+      } catch (_) {}
+
+      List<int> outBytes = await document.save();
+
+      // 2. Verify whether the saved document opens without password
+      bool isFullyUnlocked = false;
+      try {
+        final verifyDoc = sf_pdf.PdfDocument(inputBytes: outBytes);
+        verifyDoc.dispose();
+        isFullyUnlocked = true;
+      } catch (_) {
+        isFullyUnlocked = false;
+      }
+
+      // 3. Fallback: if direct save retained encryption, copy pages into a fresh unencrypted document
+      if (!isFullyUnlocked) {
+        final cleanDoc = sf_pdf.PdfDocument();
+        cleanDoc.compressionLevel = sf_pdf.PdfCompressionLevel.best;
+        cleanDoc.fileStructure.incrementalUpdate = false;
+
+        for (int i = 0; i < document.pages.count; i++) {
+          final page = document.pages[i];
+          final template = page.createTemplate();
+          final section = cleanDoc.sections.add();
+          section.pageSettings.size = page.size;
+          section.pageSettings.margins.all = 0;
+          final newPage = section.pages.add();
+          newPage.graphics.drawPdfTemplate(
+            template,
+            const Offset(0, 0),
+            page.size,
+          );
+        }
+
+        outBytes = await cleanDoc.save();
+        cleanDoc.dispose();
+      }
+
       document.dispose();
 
       final originalName = _pickedFile!.name.replaceAll('.pdf', '');

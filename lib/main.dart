@@ -33,13 +33,15 @@ void main() async {
   }
 
   // Check for incoming intent BEFORE showing splash.
-  // If the app was opened by tapping a PDF file, skip splash entirely.
+  // If the app was opened by tapping a file or sharing, skip splash entirely.
   String? incomingFilePath;
+  bool hasIncomingIntent = false;
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     try {
       final initialMedia =
           await ReceiveSharingIntent.instance.getInitialMedia();
       if (initialMedia.isNotEmpty) {
+        hasIncomingIntent = true;
         incomingFilePath = initialMedia.first.path;
       }
     } catch (_) {
@@ -52,6 +54,9 @@ void main() async {
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
     try {
       incomingFilePath = await IosIncomingFiles.takeLatestPath();
+      if (incomingFilePath != null) {
+        hasIncomingIntent = true;
+      }
     } catch (_) {
       // No pending document — proceed normally.
     }
@@ -63,7 +68,10 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AppState()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
-      child: SplashWrapper(incomingFilePath: incomingFilePath),
+      child: SplashWrapper(
+        incomingFilePath: incomingFilePath,
+        hasIncomingIntent: hasIncomingIntent,
+      ),
     ),
   );
 }
@@ -72,8 +80,13 @@ class SplashWrapper extends StatefulWidget {
   /// If non-null, the app was launched by opening a PDF file externally.
   /// Splash will be skipped and this file will be opened directly.
   final String? incomingFilePath;
+  final bool hasIncomingIntent;
 
-  const SplashWrapper({super.key, this.incomingFilePath});
+  const SplashWrapper({
+    super.key,
+    this.incomingFilePath,
+    this.hasIncomingIntent = false,
+  });
 
   @override
   State<SplashWrapper> createState() => _SplashWrapperState();
@@ -90,7 +103,7 @@ class _SplashWrapperState extends State<SplashWrapper> {
   }
 
   Future<void> _checkSplash() async {
-    // Skip splash on web
+    // 1. Skip splash on web
     if (kIsWeb) {
       setState(() {
         _showSplash = false;
@@ -99,8 +112,10 @@ class _SplashWrapperState extends State<SplashWrapper> {
       return;
     }
 
-    // Skip splash when app is opened via an external file intent
-    if (widget.incomingFilePath != null) {
+    // 2. Skip splash when app is opened via an external file or share intent (Open With / Share)
+    if (widget.hasIncomingIntent ||
+        (widget.incomingFilePath != null &&
+            widget.incomingFilePath!.isNotEmpty)) {
       setState(() {
         _showSplash = false;
         _initialized = true;
@@ -108,9 +123,11 @@ class _SplashWrapperState extends State<SplashWrapper> {
       return;
     }
 
+    // 3. Only show splash once per day
     final settings = Provider.of<SettingsProvider>(context, listen: false);
     final now = DateTime.now();
-    final today = "${now.year}-${now.month}-${now.day}";
+    final today =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
 
     if (settings.lastSplashDate == today) {
       _showSplash = false;
